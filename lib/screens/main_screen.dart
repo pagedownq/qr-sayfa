@@ -60,10 +60,12 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           IndexedStack(
             index: _currentIndex,
-            children: const [
-              DashboardScreen(),
-              QrScannerScreen(),
-              SettingsScreen(),
+            children: [
+              const DashboardScreen(),
+              _currentIndex == 1
+                  ? const QrScannerScreen()
+                  : const SizedBox.shrink(),
+              const SettingsScreen(),
             ],
           ),
 

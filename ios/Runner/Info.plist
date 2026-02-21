@@ -6,6 +6,8 @@
 	<string>QR kodunu tarayabilmemiz icin kameraya erismemiz gerekiyor.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Galeriden QR kodu secebilmeniz icin izin vermeniz gerekmektedir.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Olusturdugunuz QR kodunu galeriye kaydedebilmek icin bu izne ihtiyacimiz var.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Size daha iyi reklamlar sunabilmemiz icin reklam takip iznine ihtiyacimiz var.</string>
 	<key>NSAppTransportSecurity</key>
