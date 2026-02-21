@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1085894990290",
+    "project_id": "quiro-5c21e",
+    "storage_bucket": "quiro-5c21e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085894990290:android:09511a7b6ee43538d9900b",
+        "android_client_info": {
+          "package_name": "com.mgverse.Qurio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1085894990290-s6hm6bpg95u704lqlo2its9oqj4ilofj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mgverse.Qurio",
+            "certificate_hash": "82b6f7c609cf03f199b9c00d1a7f5f93402f88b3"
+          }
+        },
+        {
+          "client_id": "1085894990290-f3d5svrmhon0u97ch7shkuus85s2ivba.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCt1b-TLUqkY3q2QaTnfvq5B6OKBN_2v6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1085894990290-f3d5svrmhon0u97ch7shkuus85s2ivba.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1085894990290-6j78rmn9lnqu43sikghetfoe869gtit5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mgverse.Qurio"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
