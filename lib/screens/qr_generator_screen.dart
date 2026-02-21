@@ -5,6 +5,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:gal/gal.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:ui' show ImageFilter;
+
 class QRGeneratorScreen extends StatefulWidget {
   const QRGeneratorScreen({super.key});
 
@@ -51,7 +52,10 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
       );
 
       if (image != null) {
-        await Gal.putImageBytes(image, name: "QR_Code_${DateTime.now().millisecondsSinceEpoch}");
+        await Gal.putImageBytes(
+          image,
+          name: "QR_Code_${DateTime.now().millisecondsSinceEpoch}",
+        );
         _showToast('QR Kod başarıyla galeriye kaydedildi!');
       }
     } catch (e) {
@@ -81,7 +85,10 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           'Hızlı QR Oluştur',
-          style: const TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: CupertinoColors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: const Color(0x801E293B),
         border: null,
@@ -111,7 +118,10 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: CupertinoColors.white.withValues(alpha: 0.08), width: 1.5),
+                      border: Border.all(
+                        color: CupertinoColors.white.withValues(alpha: 0.08),
+                        width: 1.5,
+                      ),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
@@ -136,8 +146,14 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                               CupertinoTextField(
                                 controller: _controller,
                                 placeholder: 'Metin veya link girin...',
-                                placeholderStyle: TextStyle(color: const Color(0xFF64748B).withValues(alpha: 0.5)),
-                                style: const TextStyle(color: CupertinoColors.white),
+                                placeholderStyle: TextStyle(
+                                  color: const Color(
+                                    0xFF64748B,
+                                  ).withValues(alpha: 0.5),
+                                ),
+                                style: const TextStyle(
+                                  color: CupertinoColors.white,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFF0F172A),
                                   borderRadius: BorderRadius.circular(12),
@@ -168,7 +184,9 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF00D2FF).withValues(alpha: 0.2),
+                            color: const Color(
+                              0xFF00D2FF,
+                            ).withValues(alpha: 0.2),
                             blurRadius: 30,
                             spreadRadius: 5,
                           ),
@@ -182,20 +200,29 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     CupertinoButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 16,
+                      ),
                       color: const Color(0xFF00D2FF),
                       borderRadius: BorderRadius.circular(16),
                       onPressed: _saveQR,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(CupertinoIcons.cloud_download, color: CupertinoColors.white),
+                          const Icon(
+                            CupertinoIcons.cloud_download,
+                            color: CupertinoColors.white,
+                          ),
                           const SizedBox(width: 10),
                           Text(
-                            'Kaydet'ToGallery,
-                            style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
+                            'Kodu Galeriye Kaydet',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
+                            ),
                           ),
                         ],
                       ),
@@ -210,7 +237,9 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                     const SizedBox(height: 16),
                     Text(
                       'QR kodunuz burada görünecek',
-                      style: TextStyle(color: const Color(0xFF64748B).withValues(alpha: 0.7)),
+                      style: TextStyle(
+                        color: const Color(0xFF64748B).withValues(alpha: 0.7),
+                      ),
                     ),
                   ],
                 ],

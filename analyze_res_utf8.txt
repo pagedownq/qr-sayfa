@@ -1,4 +1,0 @@
-Analyzing qr-sayfa...                                           
-
-   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\policies_screen.dart:48:46 - deprecated_member_use
-

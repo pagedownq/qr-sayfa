@@ -18,6 +18,7 @@ import 'policies_screen.dart';
 import 'qr_generator_screen.dart';
 import '../onboarding_screen.dart';
 import '../services/review_service.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -398,7 +399,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           trailing: const CupertinoListTileChevron(),
                           onTap: () {
-                            Share.share('Qurio ile tanışın! Tüm dijital varlığınız tek bir QR kodda.');
+                            Share.share(
+                              'Qurio ile tanışın! Tüm dijital varlığınız tek bir QR kodda.',
+                            );
                           },
                         ),
                         CupertinoListTile(
@@ -623,9 +626,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ? 'WiFi Bağlantısı Ekle'
                         : (isOther
                               ? 'Bağlantı Detayları'
-                              : 'Ekle'PlatformLink(
-                                  platform['name'],
-                                )),
+                              : '${platform['name']} Linki Ekle'),
                   ),
                 ],
               ),

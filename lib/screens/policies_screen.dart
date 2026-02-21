@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../utils/app_state.dart';
+
 class PoliciesScreen extends StatelessWidget {
   const PoliciesScreen({super.key});
 
@@ -8,7 +9,10 @@ class PoliciesScreen extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xFF0F172A),
       navigationBar: CupertinoNavigationBar(
-        middle: Text('Politikalar ve Gizlilik'Title, style: const TextStyle(color: CupertinoColors.white)),
+        middle: const Text(
+          'Yasal Politikalar',
+          style: TextStyle(color: CupertinoColors.white),
+        ),
         backgroundColor: const Color(0xFF1E293B),
       ),
       child: SafeArea(

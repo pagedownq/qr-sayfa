@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' show Colors;
 import '../models/scan_history_item.dart';
 import '../utils/app_state.dart';
 import '../utils/url_launcher_util.dart';
+
 class ScanHistoryScreen extends StatelessWidget {
   const ScanHistoryScreen({super.key});
 
@@ -48,7 +49,7 @@ class ScanHistoryScreen extends StatelessWidget {
                   builder: (context) => CupertinoAlertDialog(
                     title: Text('Geçmişi Temizle'),
                     content: Text(
-                      'Geçmişi Temizle'Confirm,
+                      'Tüm geçmişi silmek istediğinize emin misiniz?',
                     ),
                     actions: [
                       CupertinoDialogAction(
@@ -113,15 +114,22 @@ class ScanHistoryScreen extends StatelessWidget {
               children: history.map((item) {
                 final content = item.content.trim();
                 // Basit bir URL kontrolü geliştiriyoruz
-                final bool isUrl = content.startsWith('http://') || 
-                                   content.startsWith('https://') ||
-                                   RegExp(r'^[a-zA-Z0-9\-\.]+\.[a-z]{2,}(/\S*)?$').hasMatch(content);
+                final bool isUrl =
+                    content.startsWith('http://') ||
+                    content.startsWith('https://') ||
+                    RegExp(
+                      r'^[a-zA-Z0-9\-\.]+\.[a-z]{2,}(/\S*)?$',
+                    ).hasMatch(content);
 
                 return Dismissible(
-                  key: ValueKey(item.timestamp.toIso8601String() + item.content),
+                  key: ValueKey(
+                    item.timestamp.toIso8601String() + item.content,
+                  ),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) async {
-                    final newList = List<ScanHistoryItem>.from(scanHistoryNotifier.value);
+                    final newList = List<ScanHistoryItem>.from(
+                      scanHistoryNotifier.value,
+                    );
                     newList.remove(item);
                     scanHistoryNotifier.value = newList;
                     // Note: StorageService automatically listens to scanHistoryNotifier changes and saves them.
@@ -141,15 +149,18 @@ class ScanHistoryScreen extends StatelessWidget {
                   child: CupertinoListTile(
                     leading: Container(
                       decoration: BoxDecoration(
-                        color: (isUrl
-                                ? CupertinoColors.activeBlue
-                            : CupertinoColors.systemGreen)
-                        .withValues(alpha: 0.2),
+                        color:
+                            (isUrl
+                                    ? CupertinoColors.activeBlue
+                                    : CupertinoColors.systemGreen)
+                                .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.all(6),
                       child: Icon(
-                        isUrl ? CupertinoIcons.link : CupertinoIcons.text_alignleft,
+                        isUrl
+                            ? CupertinoIcons.link
+                            : CupertinoIcons.text_alignleft,
                         color: isUrl
                             ? CupertinoColors.activeBlue
                             : CupertinoColors.systemGreen,
