@@ -38,7 +38,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
     }
 
     try {
-      final Uint8List? image = await _screenshotController.captureFromWidget(
+      final Uint8List image = await _screenshotController.captureFromWidget(
         Container(
           padding: const EdgeInsets.all(20),
           color: CupertinoColors.white,
@@ -51,13 +51,11 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
         ),
       );
 
-      if (image != null) {
-        await Gal.putImageBytes(
-          image,
-          name: "QR_Code_${DateTime.now().millisecondsSinceEpoch}",
-        );
-        _showToast('QR Kod başarıyla galeriye kaydedildi!');
-      }
+      await Gal.putImageBytes(
+        image,
+        name: "QR_Code_${DateTime.now().millisecondsSinceEpoch}",
+      );
+      _showToast('QR Kod başarıyla galeriye kaydedildi!');
     } catch (e) {
       _showToast('${'Hata oluştu: '}$e');
     }

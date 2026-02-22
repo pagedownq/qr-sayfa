@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -399,6 +398,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           trailing: const CupertinoListTileChevron(),
                           onTap: () {
+                            // ignore: deprecated_member_use
                             Share.share(
                               'Qurio ile tanışın! Tüm dijital varlığınız tek bir QR kodda.',
                             );

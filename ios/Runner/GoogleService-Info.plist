@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1085894990290-6j78rmn9lnqu43sikghetfoe869gtit5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1085894990290-6j78rmn9lnqu43sikghetfoe869gtit5</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1085894990290-s6hm6bpg95u704lqlo2its9oqj4ilofj.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCXC8_XJYQRmo4cEOGjDMYLZqF409-JAZQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1085894990290</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.mgverse.Qurio</string>
+	<key>PROJECT_ID</key>
+	<string>quiro-5c21e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>quiro-5c21e.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1085894990290:ios:786ef1c7b5f88f5ad9900b</string>
+</dict>
+</plist>
