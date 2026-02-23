@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'onboarding_screen.dart';
 import 'screens/main_screen.dart';
 import 'services/storage_service.dart';
+import 'services/analytics_service.dart';
 import 'utils/app_state.dart';
 
 void main() async {
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         barBackgroundColor: Color(0xFF1E293B),
       ),
       home: showOnboarding ? const OnboardingScreen() : const MainScreen(),
+      navigatorObservers: [AnalyticsService.observer],
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

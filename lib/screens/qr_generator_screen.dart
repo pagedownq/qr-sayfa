@@ -5,6 +5,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:gal/gal.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:ui' show ImageFilter;
+import '../services/analytics_service.dart';
 
 class QRGeneratorScreen extends StatefulWidget {
   const QRGeneratorScreen({super.key});
@@ -55,6 +56,8 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
         image,
         name: "QR_Code_${DateTime.now().millisecondsSinceEpoch}",
       );
+      
+      AnalyticsService.logCreateQrCode(dataType: 'custom_text');
       _showToast('QR Kod başarıyla galeriye kaydedildi!');
     } catch (e) {
       _showToast('${'Hata oluştu: '}$e');

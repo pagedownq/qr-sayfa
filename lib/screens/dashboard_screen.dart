@@ -9,6 +9,7 @@ import 'package:flutter/material.dart' show Colors, NetworkImage;
 import '../models/social_link.dart';
 import '../utils/app_state.dart';
 import '../ad_helper.dart';
+import '../services/analytics_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -82,6 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _interstitialAd = null;
     }
 
+    AnalyticsService.logViewQrPopup(platform: link.platform);
     _showQrCodeDialog(context, link);
   }
 
@@ -370,6 +372,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 final newList = List<SocialLink>.from(userLinksNotifier.value);
                 newList.remove(link);
                 userLinksNotifier.value = newList;
+                AnalyticsService.logRemoveSocialLink(platform: link.platform);
               },
               child: Text('Sil'),
             ),

@@ -8,6 +8,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../models/scan_history_item.dart';
 import '../utils/app_state.dart';
 import '../utils/url_launcher_util.dart';
+import '../services/analytics_service.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -61,6 +62,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 
   void _showQrResult(String code) {
     if (isAlertShowing) return;
+
+    AnalyticsService.logScanQrCode(
+      type: _isUrl(code) ? 'url' : 'text',
+    );
 
     // Geçmişe ekle
     final newItem = ScanHistoryItem(content: code, timestamp: DateTime.now());

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart' show Colors;
 import '../models/social_link.dart';
 import '../utils/app_state.dart';
 import '../ad_helper.dart';
+import '../services/analytics_service.dart';
 import 'scan_history_screen.dart';
 import 'reorder_links_screen.dart';
 import 'about_screen.dart';
@@ -402,6 +403,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             Share.share(
                               'Qurio ile tanışın! Tüm dijital varlığınız tek bir QR kodda.',
                             );
+                            AnalyticsService.logShareApp();
                           },
                         ),
                         CupertinoListTile(
@@ -762,6 +764,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       userLinksNotifier.value = List.from(
                         userLinksNotifier.value,
                       )..add(newLink);
+                      
+                      AnalyticsService.logAddSocialLink(
+                        platform: newLink.platform, 
+                        category: newLink.category
+                      );
 
                       if (!mounted) return;
                       Navigator.pop(context);

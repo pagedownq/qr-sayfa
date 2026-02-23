@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/main_screen.dart';
 import 'services/cloud_service.dart';
+import 'services/analytics_service.dart';
 import 'screens/policies_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -85,6 +86,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         );
         await FirebaseAuth.instance.signInWithCredential(credential);
         await CloudService.fetchDataFromCloud();
+        
+        // Log event
+        await AnalyticsService.logLogin(loginMethod: 'google');
 
         final prefs = await SharedPreferences.getInstance();
         final isFirstTime = prefs.getBool('isFirstTime') ?? true;
