@@ -290,134 +290,139 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _buildPageContent(Map<String, dynamic> data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Glassmorphic Icon Container
-          Container(
-            width: 220,
-            height: 220,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: CupertinoColors.white.withValues(alpha: 0.1),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF00D2FF).withValues(alpha: 0.05),
-                  blurRadius: 50,
-                ),
-              ],
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipOval(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                    child: Container(
-                      color: const Color(0xFF1E293B).withValues(alpha: 0.3),
+      child: Center(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Glassmorphic Icon Container
+              Container(
+                width: 220,
+                height: 220,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: CupertinoColors.white.withValues(alpha: 0.1),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF00D2FF).withValues(alpha: 0.05),
+                      blurRadius: 50,
                     ),
-                  ),
+                  ],
                 ),
-                Icon(
-                  data['icon'],
-                  size: 90,
-                  color: CupertinoColors.white,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 50),
-          
-          // Glowing Highlight Label
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF00D2FF).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: const Color(0xFF00D2FF).withValues(alpha: 0.3),
-              ),
-            ),
-            child: Text(
-              data['highlight']?.toString().toUpperCase() ?? '',
-              style: const TextStyle(
-                color: Color(0xFF00D2FF),
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Title
-          Text(
-            data['title'],
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              color: CupertinoColors.white,
-              letterSpacing: -0.5,
-              height: 1.2,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-
-          // Description
-          Text(
-            data['description'],
-            style: TextStyle(
-              fontSize: 16,
-              color: CupertinoColors.systemGrey.withValues(alpha: 0.8),
-              height: 1.6,
-              fontWeight: FontWeight.w400,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          // Policy Button Hook (if applicable)
-          if (data['type'] == 'policy') ...[
-            const SizedBox(height: 32),
-            CupertinoButton(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              color: const Color(0xFF1E293B),
-              borderRadius: BorderRadius.circular(16),
-              onPressed: () {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const PoliciesScreen(),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(0.0, 1.0);
-                      const end = Offset.zero;
-                      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: Curves.easeOutQuart));
-                      return SlideTransition(position: animation.drive(tween), child: child);
-                    },
-                  ),
-                );
-              },
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(CupertinoIcons.doc_text, color: CupertinoColors.white, size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    'Şartları ve Gizliliği Oku',
-                    style: TextStyle(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipOval(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                        child: Container(
+                          color: const Color(0xFF1E293B).withValues(alpha: 0.3),
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      data['icon'],
+                      size: 90,
                       color: CupertinoColors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: 50),
+              
+              // Glowing Highlight Label
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00D2FF).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF00D2FF).withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Text(
+                  data['highlight']?.toString().toUpperCase() ?? '',
+                  style: const TextStyle(
+                    color: Color(0xFF00D2FF),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Title
+              Text(
+                data['title'],
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: CupertinoColors.white,
+                  letterSpacing: -0.5,
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+
+              // Description
+              Text(
+                data['description'],
+                style: TextStyle(
+                  fontSize: 16,
+                  color: CupertinoColors.systemGrey.withValues(alpha: 0.8),
+                  height: 1.6,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              // Policy Button Hook (if applicable)
+              if (data['type'] == 'policy') ...[
+                const SizedBox(height: 32),
+                CupertinoButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  color: const Color(0xFF1E293B),
+                  borderRadius: BorderRadius.circular(16),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const PoliciesScreen(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(0.0, 1.0);
+                          const end = Offset.zero;
+                          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: Curves.easeOutQuart));
+                          return SlideTransition(position: animation.drive(tween), child: child);
+                        },
+                      ),
+                    );
+                  },
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(CupertinoIcons.doc_text, color: CupertinoColors.white, size: 18),
+                      SizedBox(width: 8),
+                      Text(
+                        'Şartları ve Gizliliği Oku',
+                        style: TextStyle(
+                          color: CupertinoColors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
