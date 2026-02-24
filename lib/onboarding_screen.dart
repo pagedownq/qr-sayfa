@@ -9,6 +9,9 @@ import 'screens/main_screen.dart';
 import 'services/cloud_service.dart';
 import 'services/analytics_service.dart';
 import 'screens/policies_screen.dart';
+import 'firebase_options.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -76,7 +79,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final String? clientId = !kIsWeb && Platform.isIOS
+          ? DefaultFirebaseOptions.ios.iosClientId
+          : null;
+      final String? serverClientId = !kIsWeb && Platform.isIOS
+          ? '1085894990290-f3d5svrmhon0u97ch7shkuus85s2ivba.apps.googleusercontent.com'
+          : null;
+
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        clientId: clientId,
+        serverClientId: serverClientId,
+      ).signIn();
       if (googleUser != null) {
         final GoogleSignInAuthentication googleAuth =
             await googleUser.authentication;
@@ -101,6 +114,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       }
     } catch (e) {
       debugPrint("Giriş Hatası: $e");
+      if (mounted) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text("Giriş Yapılamadı"),
+            content: Text(e.toString()),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text("Tamam"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

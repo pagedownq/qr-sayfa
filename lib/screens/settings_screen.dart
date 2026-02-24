@@ -9,6 +9,12 @@ import 'package:flutter/material.dart' show Colors;
 
 import '../models/social_link.dart';
 import '../utils/app_state.dart';
+import '../services/storage_service.dart';
+import '../services/cloud_service.dart';
+import '../models/scan_history_item.dart';
+import '../firebase_options.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 import '../ad_helper.dart';
 import '../services/analytics_service.dart';
 import 'scan_history_screen.dart';
@@ -476,7 +482,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           rootNavigator: true,
                         );
                         await FirebaseAuth.instance.signOut();
-                        await GoogleSignIn().signOut();
+                        final String? clientId = !kIsWeb && Platform.isIOS
+                            ? DefaultFirebaseOptions.ios.iosClientId
+                            : null;
+                        await GoogleSignIn(clientId: clientId).signOut();
                         userLinksNotifier.value = [];
                         if (!mounted) return;
                         messenger.pushReplacement(

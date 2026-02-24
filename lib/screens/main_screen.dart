@@ -4,6 +4,9 @@ import 'qr_scanner_screen.dart';
 import 'settings_screen.dart';
 import 'qr_generator_screen.dart';
 import 'package:quick_actions/quick_actions.dart';
+import 'package:in_app_update/in_app_update.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,9 +19,27 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   final QuickActions _quickActions = const QuickActions();
 
+  Future<void> _checkForUpdate() async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        if (updateInfo.immediateUpdateAllowed) {
+          await InAppUpdate.performImmediateUpdate();
+        } else if (updateInfo.flexibleUpdateAllowed) {
+          await InAppUpdate.startFlexibleUpdate();
+          await InAppUpdate.completeFlexibleUpdate();
+        }
+      }
+    } catch (e) {
+      debugPrint("Güncelleme Kontrol Hatası: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _checkForUpdate();
     _quickActions.initialize((String type) {
       if (type == 'scan') {
         setState(() => _currentIndex = 1);

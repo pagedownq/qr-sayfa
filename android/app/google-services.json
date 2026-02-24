@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1085894990290-s6hm6bpg95u704lqlo2its9oqj4ilofj.apps.googleusercontent.com",
+          "client_id": "1085894990290-te74pdu1644da71uqml1hismk96kis7s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mgverse.Qurio",
-            "certificate_hash": "82b6f7c609cf03f199b9c00d1a7f5f93402f88b3"
+            "certificate_hash": "13258787221627ee2a7449287ee66e49416b46e1"
           }
         },
         {
@@ -47,7 +47,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-3777090766109762~8133086245"
     }
   ],
   "configuration_version": "1"
