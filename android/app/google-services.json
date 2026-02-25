@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1085894990290-5jcvedtm7nn32tq5kq92ge9j0v8803im.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mgverse.Qurio",
+            "certificate_hash": "6fd426534348fc61a0d07fc66bd780d0c83143ce"
+          }
+        },
+        {
           "client_id": "1085894990290-te74pdu1644da71uqml1hismk96kis7s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

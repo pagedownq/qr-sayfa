@@ -24,11 +24,16 @@ class _MainScreenState extends State<MainScreen> {
     try {
       final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        if (updateInfo.immediateUpdateAllowed) {
+        try {
+          // Güncelleme varsa her zaman Immediate (Zorunlu) güncellemeyi başlatmayı dene
           await InAppUpdate.performImmediateUpdate();
-        } else if (updateInfo.flexibleUpdateAllowed) {
-          await InAppUpdate.startFlexibleUpdate();
-          await InAppUpdate.completeFlexibleUpdate();
+        } catch (e) {
+          debugPrint("Zorunlu güncelleme başlatılamadı: $e");
+          // Eğer Google Play politikası vs. yüzünden zorunlu ekran açılamazsa, esnek güncellemeyi (arka planda) başlat
+          if (updateInfo.flexibleUpdateAllowed) {
+            await InAppUpdate.startFlexibleUpdate();
+            await InAppUpdate.completeFlexibleUpdate();
+          }
         }
       }
     } catch (e) {
