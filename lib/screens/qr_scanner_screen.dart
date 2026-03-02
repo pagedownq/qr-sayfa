@@ -9,6 +9,13 @@ import '../models/scan_history_item.dart';
 import '../utils/app_state.dart';
 import '../utils/url_launcher_util.dart';
 import '../services/analytics_service.dart';
+import '../services/ad_manager.dart';
+import '../widgets/banner_ad_widget.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../services/haptic_service.dart';
+import 'package:flutter/services.dart';
+
+import 'package:image_picker/image_picker.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -37,6 +44,38 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     super.dispose();
   }
 
+  Future<void> _pickImageFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    
+    if (image != null) {
+      HapticService.selectionClick();
+      final BarcodeCapture? capture = await controller.analyzeImage(image.path);
+      if (capture == null || capture.barcodes.isEmpty) {
+        if (mounted) {
+          showCupertinoDialog(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Hata'),
+              content: const Text('Seçilen görselde geçerli bir QR kod bulunamadı.'),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('Tamam'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        final String? code = capture.barcodes.first.rawValue;
+        if (code != null) {
+          _showQrResult(code);
+        }
+      }
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!controller.value.isInitialized) {
@@ -57,7 +96,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 
   bool _isUrl(String code) {
     final uri = Uri.tryParse(code);
-    return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+    return uri != null && (uri.scheme == 'http' || uri.scheme == 'https' || uri.scheme == 'tel' || uri.scheme == 'mailto');
   }
 
   void _showQrResult(String code) {
@@ -83,7 +122,13 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     });
 
     if (autoOpenUrlNotifier.value && _isUrl(code)) {
-      launchURL(code);
+      if (isPremiumNotifier.value) {
+         launchURL(code);
+      } else {
+         AdManager().showInterstitialAd(onAdDismissed: () {
+           launchURL(code);
+         });
+      }
       setState(() {
         isAlertShowing = false;
       });
@@ -106,7 +151,13 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             if (_isUrl(code))
               CupertinoDialogAction(
                 onPressed: () {
-                  launchURL(code);
+                  if (isPremiumNotifier.value) {
+                     launchURL(code);
+                  } else {
+                     AdManager().showInterstitialAd(onAdDismissed: () {
+                       launchURL(code);
+                     });
+                  }
                 },
                 child: Text(
                   'Bağlantıya Git',
@@ -140,103 +191,122 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(
-          'QR Okuyucu',
-          style: const TextStyle(color: CupertinoColors.white),
-        ),
-        backgroundColor: const Color(0xFF1E293B),
-      ),
-      child: SafeArea(
-        child: VisibilityDetector(
-          key: const Key('qr-scanner-visibility'),
-          onVisibilityChanged: (visibilityInfo) {
-            final visiblePercentage = visibilityInfo.visibleFraction * 100;
-            if (visiblePercentage > 50) {
-              if (!isScannerActive) {
-                isScannerActive = true;
-                controller.start();
-              }
-            } else {
-              if (isScannerActive) {
-                isScannerActive = false;
-                controller.stop();
-              }
-            }
-          },
-          child: Stack(
-            children: [
-              MobileScanner(
-                controller: controller,
-                onDetect: (capture) {
-                  final List<Barcode> barcodes = capture.barcodes;
-                  for (final barcode in barcodes) {
-                    if (barcode.rawValue != null) {
-                      _showQrResult(barcode.rawValue!);
-                      break;
-                    }
-                  }
-                },
-              ),
-              Center(
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: CupertinoColors.activeBlue,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
-              if (barcodeValue != null)
-                Positioned(
-                  bottom: 120,
-                  left: 20,
-                  right: 20,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B).withValues(alpha: 0.9),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Son Okunan Değer:',
-                          style: const TextStyle(
-                            color: CupertinoColors.systemGrey,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          barcodeValue!,
-                          style: const TextStyle(
-                            color: CupertinoColors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
+    return ValueListenableBuilder<bool>(
+      valueListenable: isPremiumNotifier,
+      builder: (context, isPremium, child) {
+        return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            middle: Text(
+              'QR Okuyucu',
+              style: const TextStyle(color: CupertinoColors.white),
+            ),
+            trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: _pickImageFromGallery,
+              child: const Icon(CupertinoIcons.photo_fill, color: CupertinoColors.white),
+            ),
+            backgroundColor: const Color(0xFF1E293B),
+            border: null,
           ),
-        ),
-      ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                if (!isPremium) const BannerAdWidget(size: AdSize.banner),
+                Expanded(
+                  child: VisibilityDetector(
+                    key: const Key('qr-scanner-visibility'),
+                    onVisibilityChanged: (visibilityInfo) {
+                      final visiblePercentage = visibilityInfo.visibleFraction * 100;
+                      if (visiblePercentage > 50) {
+                        if (!isScannerActive) {
+                          isScannerActive = true;
+                          controller.start();
+                        }
+                      } else {
+                        if (isScannerActive) {
+                          isScannerActive = false;
+                          controller.stop();
+                        }
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        MobileScanner(
+                          controller: controller,
+                          onDetect: (capture) {
+                            final List<Barcode> barcodes = capture.barcodes;
+                            for (final barcode in barcodes) {
+                              if (barcode.rawValue != null) {
+                                HapticService.heavyImpact();
+                                _showQrResult(barcode.rawValue!);
+                                break;
+                              }
+                            }
+                          },
+                        ),
+                        Center(
+                          child: Container(
+                            width: 250,
+                            height: 250,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: CupertinoColors.activeBlue,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                        if (barcodeValue != null)
+                          Positioned(
+                            bottom: 120,
+                            left: 20,
+                            right: 20,
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1E293B).withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Son Okunan Değer:',
+                                    style: const TextStyle(
+                                      color: CupertinoColors.systemGrey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    barcodeValue!,
+                                    style: const TextStyle(
+                                      color: CupertinoColors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

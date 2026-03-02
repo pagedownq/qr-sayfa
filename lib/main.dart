@@ -13,6 +13,8 @@ import 'screens/main_screen.dart';
 import 'services/storage_service.dart';
 import 'services/analytics_service.dart';
 import 'utils/app_state.dart';
+import 'services/iap_service.dart';
+import 'services/haptic_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +25,13 @@ void main() async {
   // Initialize Ads (Mobile Ads SDK)
   await MobileAds.instance.initialize();
 
-  // Initialize Local Storage
+  // 1. Initialize Local Storage & Services First (to get cached status)
   await StorageService.init();
   StorageService.loadData();
+  HapticService.init(isHapticEnabledNotifier);
+
+  // 2. Initialize In-App Purchases & Sync Premium State (takes time/network)
+  await IAPService().initialize();
 
   // Fetch App Version
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();

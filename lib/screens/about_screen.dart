@@ -17,7 +17,7 @@ class AboutScreen extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.5),
+        backgroundColor: const Color(0xFF1E293B).withOpacity(0.5),
         border: null,
       ),
       child: Stack(
@@ -31,7 +31,7 @@ class AboutScreen extends StatelessWidget {
               height: 250,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF00D2FF).withValues(alpha: 0.08),
+                color: const Color(0xFF00D2FF).withOpacity(0.08),
               ),
             ),
           ),
@@ -54,18 +54,18 @@ class AboutScreen extends StatelessWidget {
                             shape: BoxShape.circle,
                             color: const Color(
                               0xFF1E293B,
-                            ).withValues(alpha: 0.8),
+                            ).withOpacity(0.8),
                             border: Border.all(
                               color: const Color(
                                 0xFF00D2FF,
-                              ).withValues(alpha: 0.2),
+                              ).withOpacity(0.2),
                               width: 1.5,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: const Color(
                                   0xFF00D2FF,
-                                ).withValues(alpha: 0.1),
+                                ).withOpacity(0.1),
                                 blurRadius: 40,
                                 spreadRadius: 5,
                               ),
@@ -149,12 +149,12 @@ class AboutScreen extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: CupertinoColors.white.withValues(alpha: 0.08),
+          color: CupertinoColors.white.withOpacity(0.08),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.black.withValues(alpha: 0.15),
+            color: CupertinoColors.black.withOpacity(0.15),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -166,7 +166,7 @@ class AboutScreen extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
             padding: const EdgeInsets.all(24),
-            color: const Color(0xFF1E293B).withValues(alpha: 0.5),
+            color: const Color(0xFF1E293B).withOpacity(0.5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

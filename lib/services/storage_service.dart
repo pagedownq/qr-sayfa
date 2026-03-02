@@ -10,6 +10,9 @@ class StorageService {
   static const String _linksKey = 'user_links_json';
   static const String _historyKey = 'scanHistory';
   static const String _autoOpenKey = 'auto_open_url';
+  static const String _isPremiumKey = 'is_premium_status';
+
+  static bool _listenersInitialized = false;
 
   static Future<void> init() async {
     // SharedPreferences doesn't need explicit init like Hive,
@@ -40,27 +43,37 @@ class StorageService {
     // 3. Otomatik açma ayarını yükle
     autoOpenUrlNotifier.value = prefs.getBool(_autoOpenKey) ?? false;
 
+    // 3.5. Premium durumunu yükle
+    isPremiumNotifier.value = prefs.getBool(_isPremiumKey) ?? false;
+
     // 4. Değişiklikleri dinle ve Kaydet
-    userLinksNotifier.addListener(() {
-      final json = jsonEncode(
-        userLinksNotifier.value.map((e) => e.toJson()).toList(),
-      );
-      prefs.setString(_linksKey, json);
-    });
+    if (!_listenersInitialized) {
+      userLinksNotifier.addListener(() {
+        final json = jsonEncode(
+          userLinksNotifier.value.map((e) => e.toJson()).toList(),
+        );
+        prefs.setString(_linksKey, json);
+      });
 
-    autoOpenUrlNotifier.addListener(() {
-      prefs.setBool(_autoOpenKey, autoOpenUrlNotifier.value);
-    });
+      autoOpenUrlNotifier.addListener(() {
+        prefs.setBool(_autoOpenKey, autoOpenUrlNotifier.value);
+      });
 
-    scanHistoryNotifier.addListener(() {
-      final json = jsonEncode(
-        scanHistoryNotifier.value.map((e) => e.toJson()).toList(),
-      );
-      prefs.setString(_historyKey, json);
-    });
+      scanHistoryNotifier.addListener(() {
+        final json = jsonEncode(
+          scanHistoryNotifier.value.map((e) => e.toJson()).toList(),
+        );
+        prefs.setString(_historyKey, json);
+      });
 
-    // 5. Bulut Senkronizasyonunu Başlat
-    CloudService.initSync();
+      isPremiumNotifier.addListener(() {
+        prefs.setBool(_isPremiumKey, isPremiumNotifier.value);
+      });
+
+      // 5. Bulut Senkronizasyonunu Başlat
+      CloudService.initSync();
+      _listenersInitialized = true;
+    }
 
     // 6. Giriş yapılmışsa güncel verileri (linkler ve geçmiş) buluttan çek
     if (FirebaseAuth.instance.currentUser != null) {

@@ -63,7 +63,7 @@ class _ReorderLinksScreenState extends State<ReorderLinksScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: CupertinoSlidingSegmentedControl<String>(
                     groupValue: _selectedCategory,
-                    backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.5),
+                    backgroundColor: const Color(0xFF1E293B).withOpacity(0.5),
                     thumbColor: const Color(0xFF00D2FF),
                     children: {
                       'personal': const Padding(
@@ -94,22 +94,10 @@ class _ReorderLinksScreenState extends State<ReorderLinksScreen> {
                     padding: const EdgeInsets.only(bottom: 20),
                     itemCount: _selectedCategory == 'personal' ? _personalLinks.length : _businessLinks.length,
                     proxyDecorator: (Widget child, int index, Animation<double> animation) {
-                      return AnimatedBuilder(
-                        animation: animation,
-                        builder: (BuildContext context, Widget? child) {
-                          final double animValue = Curves.easeInOut.transform(animation.value);
-                          final double scale = 1.0 + (0.05 * animValue);
-                          final double elevation = 10.0 * animValue;
-                          return Transform.scale(
-                            scale: scale,
-                            child: Material(
-                              elevation: elevation,
-                              color: Colors.transparent,
-                              shadowColor: Colors.black.withValues(alpha: 0.5),
-                              child: child,
-                            ),
-                          );
-                        },
+                      return Material(
+                        elevation: 4.0,
+                        color: const Color(0xFF1E293B),
+                        borderRadius: BorderRadius.circular(16),
                         child: child,
                       );
                     },

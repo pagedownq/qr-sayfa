@@ -11,7 +11,9 @@ class ScanHistoryItem {
 
   factory ScanHistoryItem.fromJson(Map<String, dynamic> json) =>
       ScanHistoryItem(
-        content: json['content'] as String,
-        timestamp: DateTime.parse(json['timestamp'] as String),
+        content: json['content'] as String? ?? '',
+        timestamp: json['timestamp'] != null 
+          ? DateTime.parse(json['timestamp'] as String) 
+          : DateTime.now(),
       );
 }

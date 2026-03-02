@@ -13,17 +13,26 @@ import '../services/storage_service.dart';
 import '../services/cloud_service.dart';
 import '../models/scan_history_item.dart';
 import '../firebase_options.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
-import '../ad_helper.dart';
+import 'dart:io' show Platform, File;
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
+import '../widgets/native_ad_widget.dart';
+import '../widgets/banner_ad_widget.dart';
+import '../widgets/add_link_modal.dart';
 import '../services/analytics_service.dart';
 import 'scan_history_screen.dart';
 import 'reorder_links_screen.dart';
 import 'about_screen.dart';
 import 'policies_screen.dart';
+import 'faq_screen.dart';
 import 'qr_generator_screen.dart';
 import '../onboarding_screen.dart';
 import '../services/review_service.dart';
+import '../services/haptic_service.dart';
+import 'premium_screen.dart';
+import '../utils/link_manager.dart';
+
+import 'platform_selection_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -32,130 +41,20 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  static const List<Map<String, dynamic>> availablePlatforms = [
-    {
-      'name': 'Instagram',
-      'icon': FontAwesomeIcons.instagram,
-      'color': Color(0xFFE1306C),
-    },
-    {
-      'name': 'X (Twitter)',
-      'icon': FontAwesomeIcons.xTwitter,
-      'color': CupertinoColors.white,
-    },
-    {
-      'name': 'Facebook',
-      'icon': FontAwesomeIcons.facebookF,
-      'color': Color(0xFF1877F2),
-    },
-    {
-      'name': 'Snapchat',
-      'icon': FontAwesomeIcons.snapchat,
-      'color': Color(0xFFFFFC00),
-    },
-    {
-      'name': 'TikTok',
-      'icon': FontAwesomeIcons.tiktok,
-      'color': CupertinoColors.white,
-    },
-    {
-      'name': 'LinkedIn',
-      'icon': FontAwesomeIcons.linkedinIn,
-      'color': Color(0xFF0A66C2),
-    },
-    {
-      'name': 'YouTube',
-      'icon': FontAwesomeIcons.youtube,
-      'color': Color(0xFFFF0000),
-    },
-    {
-      'name': 'WhatsApp',
-      'icon': FontAwesomeIcons.whatsapp,
-      'color': Color(0xFF25D366),
-    },
-    {
-      'name': 'Github',
-      'icon': FontAwesomeIcons.github,
-      'color': CupertinoColors.systemGrey3,
-    },
-    {
-      'name': 'WiFi',
-      'icon': CupertinoIcons.wifi,
-      'color': CupertinoColors.activeBlue,
-    },
-    {
-      'name': 'Diğer',
-      'icon': CupertinoIcons.link,
-      'color': CupertinoColors.link,
-    },
-  ];
-
-  NativeAd? _nativeAd;
-  bool _isNativeAdLoaded = false;
-
+class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAliveClientMixin {
   @override
-  void initState() {
-    super.initState();
-    _loadNativeAd();
-  }
+  bool get wantKeepAlive => true;
 
-  void _loadNativeAd() {
-    if (kIsWeb) return;
-    _nativeAd = NativeAd(
-      adUnitId: AdHelper.nativeAdvancedAdUnitId,
-      factoryId: 'listTile',
-      request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        mainBackgroundColor: const Color(0xFF1E293B),
-        callToActionTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.white,
-          backgroundColor: const Color(0xFF00D2FF),
-          style: NativeTemplateFontStyle.bold,
-          size: 16.0,
-        ),
-        primaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.white,
-          backgroundColor: Colors.transparent,
-          style: NativeTemplateFontStyle.italic,
-          size: 16.0,
-        ),
-        secondaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.green,
-          backgroundColor: Colors.transparent,
-          style: NativeTemplateFontStyle.bold,
-          size: 14.0,
-        ),
-        tertiaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.brown,
-          backgroundColor: Colors.transparent,
-          style: NativeTemplateFontStyle.normal,
-          size: 14.0,
-        ),
-      ),
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _isNativeAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('NativeAd failed to load: ${error.message}');
-          ad.dispose();
-        },
-      ),
-    )..load();
-  }
 
   @override
   void dispose() {
-    _nativeAd?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    final isPremium = isPremiumNotifier.value;
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xFF0F172A),
       navigationBar: const CupertinoNavigationBar(
@@ -188,6 +87,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ListView(
               physics: const BouncingScrollPhysics(),
               children: [
+                ValueListenableBuilder<bool>(
+                  valueListenable: isPremiumNotifier,
+                  builder: (context, isPremium, child) {
+                    if (isPremium) return const SizedBox.shrink();
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: BannerAdWidget(size: AdSize.banner),
+                    );
+                  }
+                ),
                 RepaintBoundary(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,6 +190,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             );
                           },
                         ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: isHapticEnabledNotifier,
+                          builder: (context, isHaptic, _) {
+                            return CupertinoListTile(
+                              leading: const _IOSSettingsIcon(
+                                icon: CupertinoIcons.waveform_path,
+                                backgroundColor: CupertinoColors.systemPink,
+                              ),
+                              title: const Text(
+                                'Titreşim Geri Bildirimi',
+                                style: TextStyle(
+                                  color: CupertinoColors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: const Text(
+                                'Dokunma tepkilerini yönetin',
+                                style: TextStyle(
+                                  color: Color(0xFF94A3B8),
+                                  fontSize: 13,
+                                ),
+                              ),
+                              trailing: CupertinoSwitch(
+                                value: isHaptic,
+                                activeTrackColor: const Color(0xFF00D2FF),
+                                onChanged: (val) {
+                                  isHapticEnabledNotifier.value = val;
+                                  if (val) HapticService.mediumImpact();
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       ]),
                     ],
                   ),
@@ -324,6 +266,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           trailing: const CupertinoListTileChevron(),
                           onTap: () => _pushInstant(const QRGeneratorScreen()),
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: isPremiumNotifier,
+                          builder: (context, isPremium, child) {
+                            if (isPremium) return const SizedBox.shrink(); // Premium ise gösterme
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 56),
+                                  child: Container(height: 1, color: const Color(0x0DFFFFFF)),
+                                ),
+                                CupertinoListTile(
+                                  leading: const _IOSSettingsIcon(
+                                    icon: CupertinoIcons.star_circle_fill,
+                                    backgroundColor: CupertinoColors.systemYellow,
+                                  ),
+                                  title: Text(
+                                    "Premium'a Geç",
+                                    style: const TextStyle(
+                                      color: CupertinoColors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    'Tüm ayrıcalıklardan faydalan',
+                                    style: const TextStyle(
+                                      color: Color(0xFF94A3B8),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  trailing: const CupertinoListTileChevron(),
+                                  onTap: () => _pushInstant(const PremiumScreen()),
+                                ),
+                              ],
+                            );
+                          }
                         ),
                       ]),
                     ],
@@ -444,6 +422,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         CupertinoListTile(
                           leading: const _IOSSettingsIcon(
+                            icon: CupertinoIcons.question_circle_fill,
+                            backgroundColor: CupertinoColors.systemIndigo,
+                          ),
+                          title: const Text(
+                            'Sıkça Sorulan Sorular',
+                            style: TextStyle(
+                              color: CupertinoColors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          trailing: const CupertinoListTileChevron(),
+                          onTap: () => _pushInstant(const FAQScreen()),
+                        ),
+                        CupertinoListTile(
+                          leading: const _IOSSettingsIcon(
                             icon: CupertinoIcons.doc_text_fill,
                             backgroundColor: CupertinoColors.systemPurple,
                           ),
@@ -481,12 +474,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           context,
                           rootNavigator: true,
                         );
+                        
+                        HapticService.heavyImpact();
+                        
                         await FirebaseAuth.instance.signOut();
                         final String? clientId = !kIsWeb && Platform.isIOS
                             ? DefaultFirebaseOptions.ios.iosClientId
                             : null;
                         await GoogleSignIn(clientId: clientId).signOut();
+                        
+                        // Clear global state
                         userLinksNotifier.value = [];
+                        scanHistoryNotifier.value = [];
+                        isPremiumNotifier.value = false;
+                        
                         if (!mounted) return;
                         messenger.pushReplacement(
                           PageRouteBuilder(
@@ -502,12 +503,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ], marginTop: 32),
                 ),
 
-                if (_isNativeAdLoaded && _nativeAd != null)
-                  RepaintBoundary(
-                    child: _buildGlassSection([
-                      SizedBox(height: 320, child: AdWidget(ad: _nativeAd!)),
-                    ], marginTop: 32),
-                  ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: isPremiumNotifier,
+                  builder: (context, isPremium, child) {
+                    if (isPremium) {
+                      return RepaintBoundary(
+                        child: _buildGlassSection([
+                          CupertinoListTile(
+                            leading: const _IOSSettingsIcon(
+                              icon: CupertinoIcons.star_fill,
+                              backgroundColor: Color(0xFFFFD700), // Altın Rengi
+                            ),
+                            title: const Text(
+                              'Premium Aktif',
+                              style: TextStyle(
+                                color: Color(0xFFFFD700),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            subtitle: const Text(
+                              'Tüm sınırsız özellikleri kullanıyorsunuz',
+                              style: TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ], marginTop: 32),
+                      );
+                    }
+                    return RepaintBoundary(
+                      child: _buildGlassSection([
+                        const NativeAdWidget(),
+                      ], marginTop: 32),
+                    );
+                  }
+                ),
 
                 const SizedBox(height: 60),
                 Center(
@@ -570,244 +602,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showPlatformSelectionDialog() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return CupertinoActionSheet(
-          title: const Text('Platform Seçin', style: TextStyle(fontSize: 18)),
-          message: const Text('Eklemek istediğiniz sosyal medyanızı seçin.'),
-          actions: availablePlatforms.map((platform) {
-            return CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                _showAddLinkDialog(platform);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(platform['icon'], color: platform['color'], size: 24),
-                  const SizedBox(width: 12),
-                  Text(
-                    platform['name'],
-                    style: const TextStyle(color: CupertinoColors.activeBlue),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-          cancelButton: CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('İptal'),
-          ),
-        );
-      },
+  Future<void> _showPlatformSelectionDialog() async {
+    final selectedPlatform = await Navigator.of(context).push<Map<String, dynamic>>(
+      CupertinoPageRoute(
+        builder: (context) => const PlatformSelectionScreen(),
+      ),
     );
+
+    if (selectedPlatform != null && mounted) {
+      showAddLinkModal(context, selectedPlatform);
+    }
   }
 
-  void _showAddLinkDialog(Map<String, dynamic> platform) {
-    final TextEditingController urlController = TextEditingController();
-    final TextEditingController nameController = TextEditingController(
-      text: platform['name'],
-    );
-    final TextEditingController wifiSsidController = TextEditingController();
-    final TextEditingController wifiPasswordController =
-        TextEditingController();
 
-    final bool isOther = platform['name'] == 'Diğer';
-    final bool isWifi = platform['name'] == 'WiFi';
-
-    String currentCategory = 'personal';
-
-    showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return CupertinoAlertDialog(
-              title: Column(
-                children: [
-                  Icon(platform['icon'], color: platform['color'], size: 40),
-                  const SizedBox(height: 8),
-                  Text(
-                    isWifi
-                        ? 'WiFi Bağlantısı Ekle'
-                        : (isOther
-                              ? 'Bağlantı Detayları'
-                              : '${platform['name']} Linki Ekle'),
-                  ),
-                ],
-              ),
-              content: Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CupertinoSlidingSegmentedControl<String>(
-                      groupValue: currentCategory,
-                      backgroundColor: const Color(0xFF0F172A),
-                      thumbColor: const Color(0xFF00D2FF),
-                      children: {
-                        'personal': Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'Kişisel',
-                            style: const TextStyle(
-                              color: CupertinoColors.white,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                        'business': Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'İş',
-                            style: const TextStyle(
-                              color: CupertinoColors.white,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      },
-                      onValueChanged: (val) {
-                        if (val != null) {
-                          setDialogState(() {
-                            currentCategory = val;
-                          });
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    if (isWifi) ...[
-                      CupertinoTextField(
-                        controller: wifiSsidController,
-                        placeholder: 'Ağ Adı (SSID)',
-                        style: const TextStyle(color: CupertinoColors.white),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      const SizedBox(height: 12),
-                      CupertinoTextField(
-                        controller: wifiPasswordController,
-                        placeholder: 'Şifre',
-                        obscureText: true,
-                        style: const TextStyle(color: CupertinoColors.white),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                    ] else ...[
-                      if (isOther) ...[
-                        CupertinoTextField(
-                          controller: nameController,
-                          placeholder: 'Başlık (Örn: Portfolyom)',
-                          style: const TextStyle(color: CupertinoColors.white),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0F172A),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
-                      CupertinoTextField(
-                        controller: urlController,
-                        placeholder: 'https://...',
-                        autofocus: true,
-                        style: const TextStyle(color: CupertinoColors.white),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              actions: [
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('İptal'),
-                ),
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  onPressed: () {
-                    // ... (rest of logic unchanged, just strings in popups)
-                    // Wait, i should replace strings in popups too
-                    String finalUrl = '';
-                    String finalName = '';
-
-                    if (isWifi) {
-                      final ssid = wifiSsidController.text.trim();
-                      final pass = wifiPasswordController.text.trim();
-                      if (ssid.isNotEmpty) {
-                        finalUrl = 'WIFI:S:$ssid;T:WPA;P:$pass;;';
-                        finalName = ssid;
-                      }
-                    } else {
-                      finalUrl = urlController.text.trim();
-                      finalName = isOther
-                          ? nameController.text.trim()
-                          : platform['name'];
-                    }
-
-                    if (finalUrl.isNotEmpty && finalName.isNotEmpty) {
-                      final newLink = SocialLink(
-                        platform: finalName,
-                        icon: platform['icon'],
-                        color: platform['color'],
-                        url: finalUrl,
-                        category: currentCategory,
-                      );
-
-                      userLinksNotifier.value = List.from(
-                        userLinksNotifier.value,
-                      )..add(newLink);
-                      
-                      AnalyticsService.logAddSocialLink(
-                        platform: newLink.platform, 
-                        category: newLink.category
-                      );
-
-                      if (!mounted) return;
-                      Navigator.pop(context);
-
-                      showCupertinoDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (context) => CupertinoAlertDialog(
-                          title: const Text('Başarılı'),
-                          content: Text('$finalName başarıyla eklendi!'),
-                          actions: [
-                            CupertinoDialogAction(
-                              isDefaultAction: true,
-                              child: const Text('Tamam'),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Ekle'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
 
   void _pushInstant(Widget screen) {
     Navigator.of(context).push(

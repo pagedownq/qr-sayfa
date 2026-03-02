@@ -22,33 +22,33 @@ class PoliciesScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildPolicySection(
-                '1. Gizlilik Politikası (Privacy Policy)',
-                'Qurio asistan uygulaması olarak gizliliğinize en yüksek önemi veriyoruz. Uygulamamız, profilinizi oluşturmak, sosyal linklerinizi ve tarama geçmişinizi tüm cihazlarınızda senkronize etmek için Google Hesabı bilgilerinizi (Ad, Soyad, E-posta ve UID) kullanır. Bu veriler Firebase (Google Cloud) altyapısı üzerinde yüksek güvenlikli SSL/TLS şifrelemesi ile saklanmaktadır.',
+                '1. Gizlilik ve Veri Güvenliği',
+                'Qurio asistan uygulaması, kullanıcı gizliliğini en temel öncelik olarak kabul eder. Uygulamamız, Google Hesabı bilgilerinizi yalnızca profil senkronizasyonu ve kullanıcı deneyimini iyileştirmek amacıyla kullanır. Tüm verileriniz Google Firebase altyapısında SSL şifreleme ile saklanmaktadır.',
               ),
               _buildPolicySection(
-                '2. Veri İşleme ve Üçüncü Taraf İş Ortakları',
-                'Uygulama, reklam optimizasyonu ve analitik raporlama amacıyla Google AdMob ve Firebase Analytics servislerini kullanır. Bu servisler Apple (IDFA) ve Google (AAID) reklam tanımlayıcıları gibi anonim verileri toplayabilir. Kişisel verileriniz (e-posta vb.) asla 3. taraf reklam ağlarına pazarlama amacıyla satılmaz veya paylaşılmaz.',
+                '2. Bilgi Toplama ve Kullanım Kavramları',
+                'Analitik veriler ve reklam performans ölçümleri için Google AdMob ve Firebase Analytics entegrasyonları kullanılmaktadır. Bu süreçte kişisel kimlik bilgileriniz paylaşılmaz, yalnızca uygulama performansını artırmaya yönelik teknik veriler anonim olarak işlenir.',
               ),
               _buildPolicySection(
-                '3. Veri Saklama ve Hesap Silme (Right to Erasure)',
-                'Google Play ve Apple App Store regülasyonları gereği, kullanıcılarımız tüm verilerini diledikleri an silme hakkına sahiptir. Hesabınızı ve hesabınıza bağlı tüm verileri (sosyal linkler, tarama geçmişi) kalıcı olarak silmek için Ayarlar > Hesabı Sil adımlarını izleyebilir veya doğrudan mgverse.dev@gmail.com adresinden resmi veri silme talebinde bulunabilirsiniz. Talepleriniz 3 iş günü içinde sonuçlandırılır.',
+                '3. KVKK ve Veri Silme Hakları',
+                'Kullanıcılarımız 6698 sayılı KVKK ve ilgili regülasyonlar kapsamında her zaman verilerinin silinmesini talep etme hakkına sahiptir. Ayarlar panelindeki "Hesabı Sil" butonu ile tüm verilerinizi anında sistemden temizleyebilirsiniz.',
               ),
               _buildPolicySection(
-                '4. Kamera ve Galeri Erişimi',
-                'QR kodlarını okumak için uygulamamız kamera erişimine ihtiyaç duyar. Kamera görüntüsü canlı olarak işlenir; hiçbir görüntü veya video sunucularımıza kaydedilmez veya saklanmaz. Sadece kodun içindeki metin/URL bilgisi, isteğinize bağlı olarak yerel geçmişinize kaydedilir.',
+                '4. İzinler ve Kamera Erişimi',
+                'QR kodu tarama işlevi için gerekli olan kamera erişimi, görüntüyü kaydetmeden anlık olarak işler. Hiçbir görüntü sunucularımıza aktarılmaz veya saklanmaz. Logo ekleme özelliği için ise yalnızca seçtiğiniz görsele yerel bazlı erişim sağlanır.',
               ),
               _buildPolicySection(
-                '5. Kullanıcı Sorumlulukları ve İçerik Politikası',
-                'Kullanıcılar, oluşturdukları veya paylaştıkları QR kodların yönlendirdiği içeriklerden tamamen kendileri sorumludur. Apple ve Google içerik politikalarını ihlal eden; müstehcenlik, kumar, yasa dışı faaliyetler veya nefret söylemi içeren bağlantıların paylaşılması durumunda kullanıcı hesabı askıya alınır.',
+                '5. Kullanım Koşulları ve Yasaklanan İçerikler',
+                'Oluşturulan QR kodların içeriği tamamen kullanıcının sorumluluğundadır. Yasa dışı faaliyet teşviği, telif hakkı ihlali veya etik dışı içerik yönlendirmesi yapan kodların tespiti halinde hesap kullanımına son verilir.',
               ),
               _buildPolicySection(
-                '6. İletişim ve Geliştirici Bilgileri',
-                'Bu politikalar ve veri haklarınız hakkında tüm sorularınız için geliştirici ekibimizle iletişime geçebilirsiniz:\\n\\n✉️ E-posta: mgverse.dev@gmail.com\\n🌐 Web: https://mgverse.dev',
+                '6. İletişim ve Destek Hattı',
+                'Politikalarımız hakkındaki geri bildirimleriniz veya destek talepleriniz için mgverse.dev@gmail.com adresinden bizimle 7/24 iletişime geçebilirsiniz.',
               ),
               const SizedBox(height: 10),
               Container(
                 height: 1,
-                color: CupertinoColors.white.withValues(alpha: 0.1),
+                color: CupertinoColors.white.withOpacity(0.1),
               ),
               const SizedBox(height: 20),
               Center(

@@ -14,4 +14,11 @@ final ValueNotifier<List<ScanHistoryItem>> scanHistoryNotifier = ValueNotifier(
 final ValueNotifier<bool> autoOpenUrlNotifier = ValueNotifier(false);
 
 // Uygulama versiyonu
+// Uygulama versiyonu
 final ValueNotifier<String> appVersionNotifier = ValueNotifier('1.0.0');
+
+// Premium Durumu
+final ValueNotifier<bool> isPremiumNotifier = ValueNotifier(false);
+
+// Titreşim (Haptic) ayarı
+final ValueNotifier<bool> isHapticEnabledNotifier = ValueNotifier(true);

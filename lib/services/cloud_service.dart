@@ -96,8 +96,12 @@ class CloudService {
     }
   }
 
+  static bool _syncInitialized = false;
+
   // Otomatik senkronizasyon dinleyicisi
   static void initSync() {
+    if (_syncInitialized) return;
+
     userLinksNotifier.addListener(() {
       saveLinksToCloud();
     });
@@ -105,5 +109,7 @@ class CloudService {
     scanHistoryNotifier.addListener(() {
       saveHistoryToCloud();
     });
+
+    _syncInitialized = true;
   }
 }
