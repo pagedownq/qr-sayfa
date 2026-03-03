@@ -510,6 +510,31 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                         );
                       },
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 56),
+                      child: Container(height: 1, color: const Color(0x0DFFFFFF)),
+                    ),
+                    CupertinoListTile(
+                      leading: const _IOSSettingsIcon(
+                        icon: CupertinoIcons.delete,
+                        backgroundColor: Color(0xFF64748B),
+                      ),
+                      title: const Text(
+                        'Hesabı Sil',
+                        style: TextStyle(
+                          color: Color(0xFF94A3B8),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Tüm verileriniz kalıcı olarak silinir',
+                        style: TextStyle(
+                          color: Color(0x8094A3B8),
+                          fontSize: 12,
+                        ),
+                      ),
+                      onTap: () => _showDeleteAccountDialog(context),
+                    ),
                   ]),
                 ),
 
@@ -601,6 +626,82 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
         pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
+      ),
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      HapticService.heavyImpact();
+      
+      // 1. Delete user from Firebase
+      await user.delete();
+
+      // 2. Clear global state & storage
+      userLinksNotifier.value = [];
+      scanHistoryNotifier.value = [];
+      isPremiumNotifier.value = false;
+      await StorageService.clearAll();
+
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const OnboardingScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        _showErrorDialog('Hesabınızı silebilmek için yeni oturum açmış olmanız gerekmektedir. Lütfen çıkış yapıp tekrar girin.');
+      } else {
+        _showErrorDialog('Hesap silme işlemi sırasında bir hata oluştu: ${e.message}');
+      }
+    } catch (e) {
+      _showErrorDialog('Bir hata oluştu: $e');
+    }
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Hesabınızı Silin'),
+        content: const Text(
+          'Hesabınızı ve tüm verilerinizi kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('Vazgeç'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              _deleteAccount();
+            },
+            child: const Text('Evet, Sil'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Hata'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('Tamam'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }

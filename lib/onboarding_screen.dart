@@ -168,6 +168,104 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  Future<void> _signInWithEmail(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+      await CloudService.fetchDataFromCloud();
+      await AnalyticsService.logLogin(loginMethod: 'email');
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isFirstTime', false);
+
+      if (mounted) _goToMain();
+    } catch (e) {
+      debugPrint("E-posta Giriş Hatası: $e");
+      if (mounted) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Giriş Hatası'),
+            content: const Text('E-posta veya şifre hatalı. Lütfen tekrar deneyin.'),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text('Tamam'),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showEmailLoginDialog() {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('E-posta ile Giriş'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Column(
+            children: [
+              CupertinoTextField(
+                controller: emailController,
+                placeholder: 'E-posta',
+                keyboardType: TextInputType.emailAddress,
+                style: const TextStyle(color: CupertinoColors.white),
+                placeholderStyle: TextStyle(color: CupertinoColors.systemGrey.withOpacity(0.5)),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E293B),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              const SizedBox(height: 12),
+              CupertinoTextField(
+                controller: passwordController,
+                placeholder: 'Şifre',
+                obscureText: true,
+                style: const TextStyle(color: CupertinoColors.white),
+                placeholderStyle: TextStyle(color: CupertinoColors.systemGrey.withOpacity(0.5)),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E293B),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('Vazgeç'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('Giriş Yap'),
+            onPressed: () {
+              final email = emailController.text;
+              final password = passwordController.text;
+              Navigator.pop(context);
+              _signInWithEmail(email, password);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   void _nextPage() {
     if (_currentPage < _onboardingData.length - 1) {
       _pageController.nextPage(
@@ -191,6 +289,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFF0F172A),
       child: Stack(
         children: [
@@ -400,7 +499,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 12),
             ],
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                color: const Color(0xFF1E293B),
+                borderRadius: BorderRadius.circular(20),
+                onPressed: _isLoading ? null : _showEmailLoginDialog,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(CupertinoIcons.mail_solid, size: 20, color: CupertinoColors.white),
+                    SizedBox(width: 12),
+                    Text(
+                      'E-posta ile Devam Et',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: CupertinoColors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ] else
             SizedBox(
               width: double.infinity,

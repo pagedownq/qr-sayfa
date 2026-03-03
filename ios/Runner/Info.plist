@@ -60,6 +60,8 @@
 	<string>QR kodları galeriye kaydetmek için galeri erişimine ihtiyacımız var.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>QR kodları galeriye eklemek için izne ihtiyacımız var.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Size daha ilgi çekici ve kişiselleştirilmiş reklamlar sunabilmek için verilerinizi kullanmamıza izin verin.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
