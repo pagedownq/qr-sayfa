@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import '../../models/social_link.dart';
 import '../../utils/pretty_qr_helper.dart';
+import 'dart:io';
 
 class DashboardCoverCard extends StatelessWidget {
   final List<SocialLink> links;
@@ -27,8 +28,8 @@ class DashboardCoverCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            primaryLink.color.withOpacity(0.8),
-            primaryLink.color.withOpacity(0.4),
+            primaryLink.color.withValues(alpha: 0.8),
+            primaryLink.color.withValues(alpha: 0.4),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -36,7 +37,7 @@ class DashboardCoverCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: primaryLink.color.withOpacity(0.3),
+            color: primaryLink.color.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -51,7 +52,7 @@ class DashboardCoverCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Text(
@@ -78,7 +79,7 @@ class DashboardCoverCard extends StatelessWidget {
                 Text(
                   'Hızlı paylaşım için okutun',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 13,
                   ),
                 ),
@@ -94,7 +95,7 @@ class DashboardCoverCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                   ),
                 ],
@@ -104,10 +105,12 @@ class DashboardCoverCard extends StatelessWidget {
                 height: 70,
                 child: PrettyQrView.data(
                   data: primaryLink.url,
+                  errorCorrectLevel: (isPremium && primaryLink.qrLogoPath != null) ? QrErrorCorrectLevel.H : QrErrorCorrectLevel.M,
                   decoration: PrettyQrHelper.getDecoration(
                     shape: isPremium ? (primaryLink.qrShape ?? 'square') : 'square',
                     eyeShape: isPremium ? (primaryLink.qrEyeShape ?? 'square') : 'square',
                     color: Colors.black,
+                    image: (isPremium && primaryLink.qrLogoPath != null) ? FileImage(File(primaryLink.qrLogoPath!)) : null,
                   ),
                 ),
               ),

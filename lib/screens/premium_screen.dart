@@ -114,7 +114,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF00D2FF).withOpacity(0.1),
+                color: const Color(0xFF00D2FF).withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -142,7 +142,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFFD700).withOpacity(0.4),
+                                color: const Color(0xFFFFD700).withValues(alpha: 0.4),
                                 blurRadius: 30,
                                 spreadRadius: 5,
                                 offset: const Offset(0, 10),
@@ -287,7 +287,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     decoration: BoxDecoration(
-                      color: isSelected && isYearly ? null : const Color(0xFF1E293B).withOpacity(0.5),
+                      color: isSelected && isYearly ? null : const Color(0xFF1E293B).withValues(alpha: 0.5),
                       gradient: isSelected && isYearly ? const LinearGradient(
                         colors: [Color(0xFF2A2A00), Color(0xFF1A1A00)],
                       ) : null,
@@ -416,7 +416,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFFD700).withOpacity(0.2),
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 5),
                 ),
@@ -473,7 +473,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                   child: Icon(
                     CupertinoIcons.sparkles,
                     size: 150,
-                    color: const Color(0xFFFFD700).withOpacity(0.5),
+                    color: const Color(0xFFFFD700).withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -496,7 +496,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                       Text(
                         'Arkadaşlarını davet et, 1 ay ücretsiz kazan.',
                         style: TextStyle(
-                          color: CupertinoColors.white.withOpacity(0.9),
+                          color: CupertinoColors.white.withValues(alpha: 0.9),
                           fontSize: 12,
                         ),
                       ),

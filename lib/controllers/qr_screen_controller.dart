@@ -8,6 +8,7 @@ import '../services/haptic_service.dart';
 
 import '../utils/logo_generator.dart';
 import '../models/platform_model.dart';
+import '../constants/platforms.dart';
 
 class QRScreenController extends ChangeNotifier {
   // UI Data Notifiers - Keep as ValueNotifier for real-time input debounce
@@ -106,9 +107,12 @@ class QRScreenController extends ChangeNotifier {
     notifyListeners();
     try {
       final path = await LogoGenerator.saveIconToImage(platform.icon, platform.color);
+      
+      // Save the platform ID to persist it across restarts
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('qr_template_platform_id', platform.id);
+      
       setLogo(path);
-      // Optional: Update color/gradient to match platform
-      // _qrColor = platform.color;
     } catch (e) {
       debugPrint("Error applying platform logo: $e");
     } finally {
@@ -117,7 +121,9 @@ class QRScreenController extends ChangeNotifier {
     }
   }
 
-  void clearPlatformLogo() {
+  void clearPlatformLogo() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('qr_template_platform_id');
     setLogo(null);
   }
 
@@ -135,8 +141,22 @@ class QRScreenController extends ChangeNotifier {
     _qrShape = prefs.getString('qr_template_shape_str') ?? 'square';
     _qrEyeShape = prefs.getString('qr_template_eye_shape') ?? 'square';
     
-    _logoPath = prefs.getString('qr_template_logo');
-    _useLogo = _logoPath != null;
+    final String? platformId = prefs.getString('qr_template_platform_id');
+    if (platformId != null) {
+      // Find the platform model and regenerate the logo because temporary files are cleared
+      try {
+        final platform = AppPlatforms.availablePlatforms.firstWhere((p) => p.id == platformId);
+        // We use a safe version of regeneration that doesn't trigger another notifyListeners loop
+        final path = await LogoGenerator.saveIconToImage(platform.icon, platform.color);
+        _logoPath = path;
+        _useLogo = true;
+      } catch (e) {
+        debugPrint("Error regenerating logo for $platformId: $e");
+      }
+    } else {
+      _logoPath = prefs.getString('qr_template_logo');
+      _useLogo = _logoPath != null;
+    }
 
     _useGradient = prefs.getBool('qr_template_use_gradient') ?? false;
     final grad1 = prefs.getInt('qr_template_grad1');
@@ -174,6 +194,10 @@ class QRScreenController extends ChangeNotifier {
     } else {
       await prefs.remove('qr_template_logo');
     }
+    
+    // Check if there is a platform-specific logo being used
+    // We could extend the state to track this properly, but for now we'll rely on the fact that
+    // applyPlatformLogo is the main way logos are set.
   }
 
   bool validateGradientContrast() {

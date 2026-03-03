@@ -12,6 +12,10 @@ import 'screens/policies_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'dart:math';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -89,6 +93,68 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
+  Future<void> _signInWithApple() async {
+    setState(() => _isLoading = true);
+    try {
+      if (Platform.isAndroid) {
+        final appleProvider = AppleAuthProvider();
+        appleProvider.addScope('email');
+        appleProvider.addScope('name');
+        await FirebaseAuth.instance.signInWithProvider(appleProvider);
+      } else {
+        final rawNonce = _generateNonce();
+        final nonce = _sha256ofString(rawNonce);
+
+        final appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          nonce: nonce,
+        );
+
+        final OAuthCredential credential = OAuthProvider('apple.com').credential(
+          idToken: appleCredential.identityToken,
+          rawNonce: rawNonce,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        // Apple carries name info ONLY on the first login. 
+        // We capture it here and update the Firebase profile.
+        if (appleCredential.givenName != null) {
+          String fullName = '${appleCredential.givenName} ${appleCredential.familyName ?? ''}'.trim();
+          await FirebaseAuth.instance.currentUser?.updateDisplayName(fullName);
+        }
+      }
+
+      await CloudService.fetchDataFromCloud();
+      await AnalyticsService.logLogin(loginMethod: 'apple');
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isFirstTime', false);
+      
+      if (mounted) _goToMain();
+    } catch (e) {
+      debugPrint("Apple Giriş Hatası: $e");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  String _generateNonce([int length = 32]) {
+    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-_';
+    final random = Random.secure();
+    return List.generate(length, (index) => charset[random.nextInt(charset.length)]).join();
+  }
+
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
   void _goToMain() {
     Navigator.pushReplacement(
       context,
@@ -105,8 +171,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _nextPage() {
     if (_currentPage < _onboardingData.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOutExpo,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
       );
     } else {
       SharedPreferences.getInstance().then((prefs) {
@@ -281,47 +347,88 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
           const SizedBox(height: 48),
-          SizedBox(
-            width: double.infinity,
-            height: 64,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              color: currentType == 'login' ? CupertinoColors.white : const Color(0xFF00D2FF),
-              borderRadius: BorderRadius.circular(24),
-              onPressed: _isLoading
-                  ? null
-                  : () {
-                      if (currentType == 'login') {
-                        _signInWithGoogle();
-                      } else {
-                        _nextPage();
-                      }
-                    },
-              child: _isLoading
-                  ? const CupertinoActivityIndicator(color: Color(0xFF0F172A))
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (currentType == 'login') ...[
-                          const FaIcon(FontAwesomeIcons.google, size: 20, color: Color(0xFF0F172A)),
-                          const SizedBox(width: 12),
-                        ],
-                        Text(
-                          _getButtonText(currentType),
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: currentType == 'login' ? const Color(0xFF0F172A) : CupertinoColors.white,
-                          ),
+          if (currentType == 'login') ...[
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                color: CupertinoColors.white,
+                borderRadius: BorderRadius.circular(20),
+                onPressed: _isLoading ? null : _signInWithGoogle,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const FaIcon(FontAwesomeIcons.google, size: 20, color: Color(0xFF0F172A)),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Google ile Devam Et',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (Platform.isIOS) ...[
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  color: CupertinoColors.black,
+                  borderRadius: BorderRadius.circular(20),
+                  onPressed: _isLoading ? null : _signInWithApple,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(FontAwesomeIcons.apple, size: 22, color: CupertinoColors.white),
+                      SizedBox(width: 10),
+                      Text(
+                        'Apple ile Devam Et',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: CupertinoColors.white,
                         ),
-                        if (currentType != 'login') ...[
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ] else
+            SizedBox(
+              width: double.infinity,
+              height: 64,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                color: const Color(0xFF00D2FF),
+                borderRadius: BorderRadius.circular(24),
+                onPressed: _isLoading ? null : _nextPage,
+                child: _isLoading
+                    ? const CupertinoActivityIndicator(color: Color(0xFF0F172A))
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _getButtonText(currentType),
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: CupertinoColors.white,
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           const Icon(CupertinoIcons.arrow_right, size: 18, color: CupertinoColors.white),
                         ],
-                      ],
-                    ),
+                      ),
+              ),
             ),
-          ),
         ],
       ),
     );

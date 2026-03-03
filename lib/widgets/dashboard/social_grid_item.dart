@@ -32,7 +32,7 @@ class SocialGridItem extends StatelessWidget {
           color: const Color(0xFF1E293B),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: link.color.withOpacity(0.3),
+            color: link.color.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),

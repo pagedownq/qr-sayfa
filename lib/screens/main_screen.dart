@@ -118,7 +118,11 @@ class _MainScreenState extends State<MainScreen> {
                 currentIndex: currentIndex,
                 onIndexChanged: (index) {
                   _currentIndexNotifier.value = index;
-                  _pageController.jumpToPage(index);
+                  _pageController.animateToPage(
+                    index, 
+                    duration: const Duration(milliseconds: 250), 
+                    curve: Curves.easeOutQuad
+                  );
                 },
               ),
             ],

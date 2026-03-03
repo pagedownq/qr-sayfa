@@ -65,38 +65,46 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Color(0x801E293B),
+        backgroundColor: Color(0xFF1E293B), // Opaque for better performance
         border: null,
       ),
       child: Stack(
         children: [
           // Background Gradient Decor
+          // Background Gradient Decor - Wrapped in RepaintBoundary for performance
           Positioned(
             top: -100,
             right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0x1A00D2FF),
+            child: RepaintBoundary(
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0x1A00D2FF),
+                ),
               ),
             ),
           ),
           SafeArea(
             child: ListView(
               physics: const BouncingScrollPhysics(),
+              addRepaintBoundaries: false, // Manual management for better control
+              cacheExtent: 800,
               children: [
                 ValueListenableBuilder<bool>(
                   valueListenable: isPremiumNotifier,
                   builder: (context, isPremium, child) {
                     if (isPremium) return const SizedBox.shrink();
-                    return const Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: BannerAdWidget(size: AdSize.banner),
+                    return const RepaintBoundary(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 16),
+                        child: BannerAdWidget(size: AdSize.banner),
+                      ),
                     );
                   }
                 ),
+                const SizedBox(height: 8),
                 RepaintBoundary(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                           ),
                         ),
                       ),
-                      _buildGlassSection([
+                      _GlassSection(children: [
                         CupertinoListTile(
                           leading: const _IOSSettingsIcon(
                             icon: CupertinoIcons.plus,
@@ -244,7 +252,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                           ),
                         ),
                       ),
-                      _buildGlassSection([
+                      _GlassSection(children: [
                         CupertinoListTile(
                           leading: const _IOSSettingsIcon(
                             icon: CupertinoIcons.qrcode_viewfinder,
@@ -324,7 +332,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                           ),
                         ),
                       ),
-                      _buildGlassSection([
+                      _GlassSection(children: [
                         CupertinoListTile(
                           leading: const _IOSSettingsIcon(
                             icon: CupertinoIcons.clock_fill,
@@ -368,7 +376,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                           ),
                         ),
                       ),
-                      _buildGlassSection([
+                      _GlassSection(children: [
                         CupertinoListTile(
                           leading: const _IOSSettingsIcon(
                             icon: CupertinoIcons.share,
@@ -456,7 +464,9 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                 ),
 
                 RepaintBoundary(
-                  child: _buildGlassSection([
+                  child: _GlassSection(
+                    marginTop: 32,
+                    children: [
                     CupertinoListTile(
                       leading: const _IOSSettingsIcon(
                         icon: CupertinoIcons.square_arrow_right,
@@ -500,7 +510,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                         );
                       },
                     ),
-                  ], marginTop: 32),
+                  ]),
                 ),
 
                 ValueListenableBuilder<bool>(
@@ -508,7 +518,9 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                   builder: (context, isPremium, child) {
                     if (isPremium) {
                       return RepaintBoundary(
-                        child: _buildGlassSection([
+                        child: _GlassSection(
+                          marginTop: 32,
+                          children: [
                           CupertinoListTile(
                             leading: const _IOSSettingsIcon(
                               icon: CupertinoIcons.star_fill,
@@ -530,13 +542,15 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                               ),
                             ),
                           ),
-                        ], marginTop: 32),
+                        ]),
                       );
                     }
                     return RepaintBoundary(
-                      child: _buildGlassSection([
+                      child: _GlassSection(
+                        marginTop: 32,
+                        children: [
                         const NativeAdWidget(),
-                      ], marginTop: 32),
+                      ]),
                     );
                   }
                 ),
@@ -565,42 +579,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildGlassSection(List<Widget> children, {double marginTop = 0}) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(16, marginTop, 16, 0),
-      decoration: BoxDecoration(
-        color: const Color(0xCC1E293B),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0x14FFFFFF), width: 1.5),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x33000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Column(
-          children: children.asMap().entries.map((entry) {
-            final index = entry.key;
-            final widget = entry.value;
-            return Column(
-              children: [
-                widget,
-                if (index < children.length - 1)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 56),
-                    child: Container(height: 1, color: const Color(0x0DFFFFFF)),
-                  ),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
+
 
   Future<void> _showPlatformSelectionDialog() async {
     final selectedPlatform = await Navigator.of(context).push<Map<String, dynamic>>(
@@ -642,6 +621,51 @@ class _IOSSettingsIcon extends StatelessWidget {
         borderRadius: BorderRadius.circular(7),
       ),
       child: Icon(icon, color: CupertinoColors.white, size: 18),
+    );
+  }
+}
+
+class _GlassSection extends StatelessWidget {
+  final List<Widget> children;
+  final double marginTop;
+
+  const _GlassSection({required this.children, this.marginTop = 0});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(16, marginTop, 16, 0),
+      decoration: BoxDecoration(
+        color: const Color(0xCC1E293B),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0x14FFFFFF), width: 1.5),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Column(
+          children: children.asMap().entries.map((entry) {
+            final index = entry.key;
+            final widget = entry.value;
+            return Column(
+              children: [
+                widget,
+                if (index < children.length - 1)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 56),
+                    child: Container(height: 1, color: const Color(0x0DFFFFFF)),
+                  ),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

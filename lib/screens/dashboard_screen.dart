@@ -3,7 +3,6 @@ import 'dart:io' show File;
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import '../utils/pretty_qr_helper.dart';
 import 'package:flutter/material.dart' show Colors, NetworkImage, FileImage;
@@ -13,7 +12,6 @@ import '../utils/app_state.dart';
 import '../services/analytics_service.dart';
 import '../services/ad_manager.dart';
 import '../widgets/banner_ad_widget.dart';
-import 'package:flutter/services.dart';
 import '../utils/link_manager.dart';
 import '../services/haptic_service.dart';
 import '../widgets/dashboard/qr_code_dialog.dart';
@@ -41,7 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AutomaticKeepAli
     AnalyticsService.logViewQrPopup(platform: link.platform);
     showCupertinoModalPopup(
       context: context,
-      barrierColor: CupertinoColors.black.withOpacity(0.1),
+      barrierColor: CupertinoColors.black.withValues(alpha: 0.1),
       builder: (context) => QrCodeDialog(link: link, isPremium: isPremium),
     );
   }
@@ -106,21 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AutomaticKeepAli
                                                     fit: BoxFit.cover,
                                                   )
                                                 : null,
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                color: Color(0x6600D2FF),
-                                                blurRadius: 15,
-                                                spreadRadius: 2,
-                                              ),
-                                            ],
                                           ),
-                                          child: user.photoURL == null
-                                              ? const Icon(
-                                                  CupertinoIcons.person_fill,
-                                                  size: 50,
-                                                  color: CupertinoColors.systemGrey,
-                                                )
-                                              : null,
                                         ),
                                         const SizedBox(height: 16),
                                         Row(
@@ -142,7 +126,6 @@ class _DashboardScreenState extends State<DashboardScreen> with AutomaticKeepAli
                                                   gradient: const LinearGradient(
                                                     colors: [Color(0xFFFFD700), Color(0xFFFDB931)],
                                                   ),
-                                                  borderRadius: BorderRadius.circular(8),
                                                 ),
                                                 child: const Text(
                                                   'PRO',
@@ -169,7 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> with AutomaticKeepAli
                               padding: const EdgeInsets.symmetric(horizontal: 40),
                               child: CupertinoSlidingSegmentedControl<String>(
                                 groupValue: _selectedCategory,
-                                backgroundColor: const Color(0xFF1E293B).withOpacity(0.5),
+                                backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.5),
                                 thumbColor: const Color(0xFF00D2FF),
                                 children: {
                                   'personal': Padding(

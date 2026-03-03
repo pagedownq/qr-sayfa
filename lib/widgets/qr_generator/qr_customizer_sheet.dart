@@ -28,10 +28,10 @@ class CustomizerBottomSheet extends StatelessWidget {
         child: Container(
           height: MediaQuery.of(context).size.height * 0.70,
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A).withOpacity(0.65),
+            color: const Color(0xFF0F172A).withValues(alpha: 0.65),
             border: Border(
               top: BorderSide(
-                color: CupertinoColors.white.withOpacity(0.1),
+                color: CupertinoColors.white.withValues(alpha: 0.1),
                 width: 1.5,
               ),
             ),
@@ -238,7 +238,7 @@ class CustomizerBottomSheet extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: colors[0].withOpacity(0.4),
+                    color: colors[0].withValues(alpha: 0.4),
                     blurRadius: 8,
                     spreadRadius: 1,
                   )
@@ -270,7 +270,7 @@ class CustomizerBottomSheet extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: color.withOpacity(0.3),
+                    color: color.withValues(alpha: 0.3),
                     blurRadius: 8,
                     spreadRadius: 1,
                   )

@@ -29,13 +29,15 @@ class QrCodeDialog extends StatelessWidget {
         ? (link.qrEyeShape == 'circle' ? 'circle' : (link.qrEyeShape ?? 'square'))
         : 'square';
 
-    final bool currentUseLogo = isPremium && link.qrLogoPath != null;
+    final bool currentUseLogo = isPremium && 
+        link.qrLogoPath != null && 
+        File(link.qrLogoPath!).existsSync();
 
     return Stack(
       children: [
         Positioned.fill(
           child: Container(
-            color: const Color(0xFF0F172A).withOpacity(0.8),
+            color: const Color(0xFF0F172A).withValues(alpha: 0.8),
           ),
         ),
         Center(
@@ -43,13 +45,13 @@ class QrCodeDialog extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 40),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E293B).withOpacity(0.85),
+              color: const Color(0xFF1E293B).withValues(alpha: 0.85),
               borderRadius: BorderRadius.circular(32),
               border: GradientBoxBorder(
                 gradient: LinearGradient(
                   colors: [
-                    link.color.withOpacity(0.7),
-                    link.color.withOpacity(0.1),
+                    link.color.withValues(alpha: 0.7),
+                    link.color.withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -58,7 +60,7 @@ class QrCodeDialog extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: link.color.withOpacity(0.1),
+                  color: link.color.withValues(alpha: 0.1),
                   blurRadius: 40,
                   spreadRadius: 10,
                 ),
@@ -73,7 +75,7 @@ class QrCodeDialog extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: link.color.withOpacity(0.15),
+                        color: link.color.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Icon(link.icon, color: link.color, size: 28),
@@ -110,6 +112,7 @@ class QrCodeDialog extends StatelessWidget {
                     ],
                   ),
                   child: AspectRatio(
+                    key: ValueKey(link.qrLogoPath),
                     aspectRatio: 1,
                     child: PrettyQrView.data(
                       data: link.url,

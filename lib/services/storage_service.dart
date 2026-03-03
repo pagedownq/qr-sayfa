@@ -4,7 +4,12 @@ import '../models/social_link.dart';
 import '../models/scan_history_item.dart';
 import '../utils/app_state.dart';
 import 'cloud_service.dart';
+import '../utils/logo_generator.dart';
+import '../constants/platforms.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart' show FileImage;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
 
 class StorageService {
   static const String _linksKey = 'user_links_json';
@@ -26,9 +31,14 @@ class StorageService {
     final String? savedLinksJson = prefs.getString(_linksKey);
     if (savedLinksJson != null) {
       final List<dynamic> decoded = jsonDecode(savedLinksJson);
-      userLinksNotifier.value = decoded.map((item) {
+      final List<SocialLink> links = decoded.map((item) {
         return SocialLink.fromJson(Map<String, dynamic>.from(item));
       }).toList();
+      
+      userLinksNotifier.value = links;
+      
+      // Background logo regeneration for local links
+      _regenerateMissingLogos(links);
     }
 
     // 2. Tarama geçmişini yükle
@@ -77,7 +87,57 @@ class StorageService {
 
     // 6. Giriş yapılmışsa güncel verileri (linkler ve geçmiş) buluttan çek
     if (FirebaseAuth.instance.currentUser != null) {
-      CloudService.fetchDataFromCloud();
+      CloudService.fetchDataFromCloud().then((_) {
+        // Also regenerate logos for links fetched from cloud
+        _regenerateMissingLogos(userLinksNotifier.value);
+      });
+    }
+  }
+
+  /// Regenerates temporary logo files for links that have a platformId
+  /// but whose logo file is missing (usually after app restart/temp clear)
+  static void _regenerateMissingLogos(List<SocialLink> links) async {
+    bool anyChanged = false;
+    final List<SocialLink> updatedLinks = List.from(links);
+
+    for (int i = 0; i < updatedLinks.length; i++) {
+      final link = updatedLinks[i];
+      
+      bool needsLogo = link.platformId != 'other' && 
+                       link.platformId != 'wifi' && 
+                       link.platformId != 'phone';
+      
+      if (needsLogo) {
+        bool logoMissing = link.qrLogoPath == null || !File(link.qrLogoPath!).existsSync();
+        
+        if (logoMissing) {
+          try {
+            debugPrint("StorageService: Regenerating missing logo for ${link.platform}");
+            final platform = AppPlatforms.availablePlatforms.firstWhere(
+              (p) => p.id == link.platformId,
+              orElse: () => AppPlatforms.availablePlatforms.first,
+            );
+            
+            final newPath = await LogoGenerator.saveIconToImage(platform.icon, platform.color);
+            
+            // Critical: Evict the image from cache to ensure UI reloads it
+            if (link.qrLogoPath != null) {
+              FileImage(File(link.qrLogoPath!)).evict();
+            }
+            FileImage(File(newPath)).evict();
+            
+            updatedLinks[i] = link.copyWith(qrLogoPath: newPath);
+            anyChanged = true;
+          } catch (e) {
+            debugPrint("StorageService: Failed to regenerate logo for ${link.platform}: $e");
+          }
+        }
+      }
+    }
+
+    if (anyChanged) {
+      debugPrint("StorageService: Updated ${updatedLinks.length} links with regenerated logos");
+      userLinksNotifier.value = updatedLinks;
     }
   }
 }

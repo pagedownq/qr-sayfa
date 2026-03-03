@@ -191,7 +191,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     HapticService.selectionClick();
     showCupertinoModalPopup(
       context: context,
-      barrierColor: CupertinoColors.black.withOpacity(0.6),
+      barrierColor: CupertinoColors.black.withValues(alpha: 0.6),
       builder: (context) => CustomizerBottomSheet(
         controller: _qrController, 
         isPremium: isPremium
@@ -238,7 +238,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
                             const SizedBox(height: 32),
                             RepaintBoundary(child: _buildInputSection()),
                             const SizedBox(height: 48),
-                            _buildQRPreview(isPremium),
+                            RepaintBoundary(child: _buildQRPreview(isPremium)),
                             const SizedBox(height: 54),
                             RepaintBoundary(child: _buildActionButtons(isPremium)),
                             const SizedBox(height: 40),
@@ -299,9 +299,9 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
                 margin: const EdgeInsets.only(right: 12),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: p.color.withOpacity(0.15),
+                  color: p.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: p.color.withOpacity(0.3)),
+                  border: Border.all(color: p.color.withValues(alpha: 0.3)),
                 ),
                 child: Icon(p.icon, color: p.color, size: 24),
               ),
@@ -361,9 +361,9 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
   Widget _buildInputSection() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withOpacity(0.35),
+        color: const Color(0xFF1E293B).withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: CupertinoColors.white.withOpacity(0.1), width: 1.2),
+        border: Border.all(color: CupertinoColors.white.withValues(alpha: 0.1), width: 1.2),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
@@ -388,7 +388,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
           controller: _qrController.inputController,
           placeholder: 'Link veya metin yapıştırın...',
           placeholderStyle: TextStyle(
-            color: const Color(0xFF94A3B8).withOpacity(0.4),
+            color: const Color(0xFF94A3B8).withValues(alpha: 0.4),
             fontSize: 15,
           ),
           style: const TextStyle(
@@ -398,7 +398,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
           ),
           cursorColor: const Color(0xFF00D2FF),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A).withOpacity(0.6),
+            color: const Color(0xFF0F172A).withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0x20FFFFFF)),
           ),
