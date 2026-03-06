@@ -14,8 +14,8 @@ import '../widgets/banner_ad_widget.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/haptic_service.dart';
 import 'package:flutter/services.dart';
-
 import 'package:image_picker/image_picker.dart';
+import '../l10n/app_localizations.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -56,11 +56,11 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           showCupertinoDialog(
             context: context,
             builder: (context) => CupertinoAlertDialog(
-              title: const Text('Hata'),
-              content: const Text('Seçilen görselde geçerli bir QR kod bulunamadı.'),
+              title: Text(tr('error')),
+              content: Text(tr('no_qr_found_in_image')),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('Tamam'),
+                  child: Text(tr('ok')),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -139,7 +139,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: Text('QR Okundu!'),
+          title: Text(tr('qr_scanned')),
           content: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
@@ -160,7 +160,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                   }
                 },
                 child: Text(
-                  'Bağlantıya Git',
+                  tr('go_to_link'),
                   style: const TextStyle(color: CupertinoColors.activeBlue),
                 ),
               ),
@@ -173,7 +173,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                 });
               },
               child: Text(
-                'Kapat',
+                tr('close'),
                 style: const TextStyle(color: CupertinoColors.systemGrey),
               ),
             ),
@@ -197,7 +197,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
         return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
             middle: Text(
-              'QR Okuyucu',
+              tr('qr_scanner'),
               style: const TextStyle(color: CupertinoColors.white),
             ),
             trailing: CupertinoButton(
@@ -279,7 +279,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Son Okunan Değer:',
+                                    tr('last_scanned_value'),
                                     style: const TextStyle(
                                       color: CupertinoColors.systemGrey,
                                     ),

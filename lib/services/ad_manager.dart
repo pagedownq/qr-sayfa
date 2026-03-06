@@ -9,7 +9,6 @@ class AdManager {
 
   InterstitialAd? _interstitialAd;
   RewardedInterstitialAd? _rewardedInterstitialAd;
-  AppOpenAdManager? appOpenAdManager;
 
   bool _isInterstitialLoading = false;
   bool _isRewardedInterstitialLoading = false;
@@ -19,7 +18,6 @@ class AdManager {
 
   Future<void> init() async {
     if (kIsWeb) return;
-    appOpenAdManager = AppOpenAdManager()..loadAd();
     _loadInterstitialAd();
     _loadRewardedInterstitialAd();
   }

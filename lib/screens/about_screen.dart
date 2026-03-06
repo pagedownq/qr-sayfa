@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../utils/app_state.dart';
+import '../l10n/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -8,10 +9,10 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xFF0F172A),
-      navigationBar: const CupertinoNavigationBar(
+      navigationBar: CupertinoNavigationBar(
         middle: Text(
-          'Hakkında',
-          style: TextStyle(
+          tr('about'),
+          style: const TextStyle(
             color: CupertinoColors.white,
             fontWeight: FontWeight.w600,
           ),
@@ -55,7 +56,7 @@ class AboutScreen extends StatelessWidget {
                 valueListenable: appVersionNotifier,
                 builder: (context, version, _) {
                   return Text(
-                    'Sürüm $version',
+                    '${tr('version')} $version',
                     style: TextStyle(
                       color: const Color(0xFF94A3B8).withValues(alpha: 0.5),
                       fontSize: 14,
@@ -68,17 +69,17 @@ class AboutScreen extends StatelessWidget {
 
               // Simple Flat Info Blocks
               _buildModernAboutSection(
-                title: 'Vizyonumuz',
-                content: 'Tüm dijital kanallarınızı tek bir noktada birleştiren en minimalist paylaşım aracı olmayı hedefliyoruz.',
+                title: tr('about_vision_title'),
+                content: tr('about_vision_desc'),
               ),
               const SizedBox(height: 48),
               _buildModernAboutSection(
-                title: 'Hız ve Güvenlik',
-                content: 'Verileriniz bulutla senkronize edilir ve istediğiniz an tüm cihazlarınızdan erişilebilir.',
+                title: tr('about_speed_title'),
+                content: tr('about_speed_desc'),
               ),
               const SizedBox(height: 48),
               _buildModernAboutSection(
-                title: 'Geliştirici',
+                title: tr('about_developer_title'),
                 content: 'MGVerse — Ankara, 2026',
               ),
 

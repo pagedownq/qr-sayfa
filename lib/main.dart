@@ -12,6 +12,7 @@ import 'onboarding_screen.dart';
 import 'screens/main_screen.dart';
 import 'services/storage_service.dart';
 import 'services/analytics_service.dart';
+import 'l10n/app_localizations.dart';
 import 'utils/app_state.dart';
 import 'services/iap_service.dart';
 import 'services/haptic_service.dart';
@@ -37,6 +38,8 @@ void main() async {
   final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   appVersionNotifier.value = packageInfo.version;
 
+  await initLocale();
+
   // Check login and onboarding status
   final prefs = await SharedPreferences.getInstance();
   final bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
@@ -48,28 +51,51 @@ void main() async {
   runApp(MyApp(showOnboarding: showOnboarding));
 }
 
+class KeyboardDismisserObserver extends NavigatorObserver {
+  @override
+  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didStartUserGesture(route, previousRoute);
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+}
+
 class MyApp extends StatelessWidget {
   final bool showOnboarding;
   const MyApp({super.key, required this.showOnboarding});
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      title: 'Qurio',
-      theme: const CupertinoThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Color(0xFF00D2FF),
-        scaffoldBackgroundColor: Color(0xFF0F172A),
-        barBackgroundColor: Color(0xFF1E293B),
-      ),
-      home: showOnboarding ? const OnboardingScreen() : const MainScreen(),
-      navigatorObservers: [AnalyticsService.observer],
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+    return ValueListenableBuilder<Locale>(
+      valueListenable: localeNotifier,
+      builder: (context, locale, child) {
+        return CupertinoApp(
+          title: 'Qurio',
+          theme: const CupertinoThemeData(
+            brightness: Brightness.dark,
+            primaryColor: Color(0xFF00D2FF),
+            scaffoldBackgroundColor: Color(0xFF0F172A),
+            barBackgroundColor: Color(0xFF1E293B),
+          ),
+          locale: locale,
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('tr', ''),
+            Locale('de', ''),
+            Locale('ru', ''),
+          ],
+          home: showOnboarding ? const OnboardingScreen() : const MainScreen(),
+          navigatorObservers: [
+            AnalyticsService.observer,
+            KeyboardDismisserObserver(),
+          ],
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+        );
+      },
     );
   }
 }

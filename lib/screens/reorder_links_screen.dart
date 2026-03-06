@@ -12,6 +12,7 @@ import 'package:flutter/material.dart'
 
 import '../models/social_link.dart';
 import '../utils/app_state.dart';
+import '../l10n/app_localizations.dart';
 
 class ReorderLinksScreen extends StatefulWidget {
   const ReorderLinksScreen({super.key});
@@ -38,14 +39,14 @@ class _ReorderLinksScreenState extends State<ReorderLinksScreen> {
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xFF0F172A),
       navigationBar: CupertinoNavigationBar(
-        middle: const Text(
-          'Sıralamayı Düzenle',
-          style: TextStyle(color: CupertinoColors.white),
+        middle: Text(
+          tr('edit_order'),
+          style: const TextStyle(color: CupertinoColors.white),
         ),
         backgroundColor: const Color(0xFF1E293B),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Text('Kaydet'),
+          child: Text(tr('save')),
           onPressed: () {
             userLinksNotifier.value = [..._personalLinks, ..._businessLinks];
             Navigator.pop(context);
@@ -66,18 +67,18 @@ class _ReorderLinksScreenState extends State<ReorderLinksScreen> {
                     backgroundColor: const Color(0xFF1E293B).withOpacity(0.5),
                     thumbColor: const Color(0xFF00D2FF),
                     children: {
-                      'personal': const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                      'personal': Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Kişisel',
-                          style: TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.w600),
+                          tr('personal'),
+                          style: const TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.w600),
                         ),
                       ),
-                      'business': const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                      'business': Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'İş',
-                          style: TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.w600),
+                          tr('business'),
+                          style: const TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.w600),
                         ),
                       ),
                     },

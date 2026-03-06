@@ -22,6 +22,7 @@ import '../models/platform_model.dart';
 import '../constants/platforms.dart';
 import '../widgets/qr_generator/qr_generator_components.dart';
 import '../widgets/qr_generator/qr_customizer_sheet.dart';
+import '../l10n/app_localizations.dart';
 
 class QRGeneratorScreen extends StatefulWidget {
   const QRGeneratorScreen({super.key});
@@ -64,7 +65,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
 
   Future<void> _handleSaveGallery() async {
     if (_qrController.qrDataNotifier.value.isEmpty) {
-      _showErrorDialog('Lütfen önce bir metin veya link girin.');
+      _showErrorDialog(tr('enter_text_or_link_first'));
       return;
     }
 
@@ -74,23 +75,23 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     try {
       final captureResult = await QRService.captureFromBoundary(_qrBoundaryKey);
       if (!captureResult.success || captureResult.data == null) {
-        _showErrorDialog(captureResult.message ?? 'QR Kod yakalanamadı.');
+        _showErrorDialog(captureResult.message ?? tr('qr_capture_failed'));
         return;
       }
 
       final saveResult = await QRService.saveToGallery(captureResult.data!);
       if (saveResult.success) {
         AnalyticsService.logCreateQrCode(dataType: 'custom_text');
-        _showSuccessDialog('QR Kod başarıyla galeriye kaydedildi!');
+        _showSuccessDialog(tr('qr_saved_to_gallery'));
         
         if (!isPremiumNotifier.value) {
           AdManager().showInterstitialAd();
         }
       } else {
-        _showErrorDialog(saveResult.message ?? 'Galeriye kaydedilemedi.');
+        _showErrorDialog(saveResult.message ?? tr('save_to_gallery_failed'));
       }
     } catch (e) {
-      _showErrorDialog('Hata oluştu: $e');
+      _showErrorDialog('${tr('error_occurred')} $e');
     } finally {
       if (mounted) setState(() => _isCapturing = false);
     }
@@ -98,7 +99,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
 
   Future<void> _handleSavePDF() async {
     if (_qrController.qrDataNotifier.value.isEmpty) {
-      _showErrorDialog('Lütfen önce bir metin veya link girin.');
+      _showErrorDialog(tr('enter_text_or_link_first'));
       return;
     }
 
@@ -110,22 +111,22 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
       final captureResult = await QRService.captureFromBoundary(_qrBoundaryKey, pixelRatio: ratio);
       
       if (!captureResult.success || captureResult.data == null) {
-        _showErrorDialog(captureResult.message ?? 'QR Kod yakalanamadı.');
+        _showErrorDialog(captureResult.message ?? tr('qr_capture_failed'));
         return;
       }
 
       final pdfResult = await QRService.saveAndSharePDF(
         captureResult.data!, 
-        text: 'Qurio Uygulaması ile Oluşturulmuştur'
+        text: tr('created_with_qurio')
       );
 
       if (pdfResult.success) {
         AnalyticsService.logCreateQrCode(dataType: 'custom_text_pdf');
       } else {
-        _showErrorDialog(pdfResult.message ?? 'PDF paylaşılamadı.');
+        _showErrorDialog(pdfResult.message ?? tr('pdf_share_failed'));
       }
     } catch (e) {
-      _showErrorDialog('PDF oluşturulurken hata oluştu: $e');
+      _showErrorDialog('${tr('error_occurred')} $e');
     } finally {
       if (mounted) setState(() => _isCapturing = false);
     }
@@ -135,11 +136,11 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Hata'),
+        title: Text(tr('error')),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Tamam'),
+            child: Text(tr('ok')),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -151,11 +152,11 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Başarılı'),
+        title: Text(tr('success')),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Harika'),
+            child: Text(tr('great')),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -164,19 +165,20 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
   }
 
   void _showPermissionErrorDialog() {
+    // This unused method left mostly untouched but translated
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('İzin Gerekli'),
-        content: const Text('QR kodun galeriye kaydedilmesi için fotoğraf erişim izni gereklidir. Lütfen ayarlardan izin verin.'),
+        title: Text(tr('permission_required')),
+        content: Text(tr('photo_access_needed')),
         actions: [
           CupertinoDialogAction(
-            child: const Text('İptal'),
+            child: Text(tr('cancel')),
             onPressed: () => Navigator.pop(context),
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: const Text('Ayarlara Git'),
+            child: Text(tr('go_to_settings')),
             onPressed: () {
               Navigator.pop(context);
               // In real apps, use openAppSettings()
@@ -206,17 +208,17 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
       builder: (context, isPremium, child) {
         return CupertinoPageScaffold(
           backgroundColor: const Color(0xFF0F172A),
-          navigationBar: const CupertinoNavigationBar(
+          navigationBar: CupertinoNavigationBar(
             middle: Text(
-              'Hızlı QR Oluştur',
-              style: TextStyle(
+              tr('quick_qr_create'),
+              style: const TextStyle(
                 color: CupertinoColors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
                 letterSpacing: -0.5,
               ),
             ),
-            backgroundColor: Color(0x900F172A),
+            backgroundColor: const Color(0x900F172A),
             border: null,
           ),
           child: Stack(
@@ -277,7 +279,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionLabel(icon: CupertinoIcons.sparkles, text: 'HIZLI SEÇİM'),
+        SectionLabel(icon: CupertinoIcons.sparkles, text: tr('quick_select')),
         const SizedBox(height: 16),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -316,16 +318,16 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Premium Gerekli'),
-        content: const Text('Platform logolarını QR kodun ortasına eklemek premium bir özelliktir.'),
+        title: Text(tr('premium_required')),
+        content: Text(tr('premium_logo_desc')),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Kapat'),
+            child: Text(tr('close')),
             onPressed: () => Navigator.pop(context),
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: const Text('Premium\'a Geç'),
+            child: Text(tr('go_premium')),
             onPressed: () {
               Navigator.pop(context);
               Navigator.push(context, CupertinoPageRoute(builder: (context) => const PremiumScreen()));
@@ -382,11 +384,11 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionLabel(icon: CupertinoIcons.text_quote, text: 'İÇERİK'),
+        SectionLabel(icon: CupertinoIcons.text_quote, text: tr('content')),
         const SizedBox(height: 16),
         CupertinoTextField(
           controller: _qrController.inputController,
-          placeholder: 'Link veya metin yapıştırın...',
+          placeholder: tr('paste_link_or_text'),
           placeholderStyle: TextStyle(
             color: const Color(0xFF94A3B8).withValues(alpha: 0.4),
             fontSize: 15,
@@ -463,7 +465,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
     return Column(
       children: [
         MainActionButton(
-          text: 'Galeriye Kaydet (PNG)',
+          text: tr('save_to_gallery_png'),
           icon: CupertinoIcons.arrow_down_to_line_alt,
           onPressed: _handleSaveGallery,
           gradient: const [Color(0xFF00D2FF), Color(0xFF3B82F6)],
@@ -471,7 +473,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> with SingleTicker
         const SizedBox(height: 16),
         if (isPremium)
           SecondaryActionButton(
-            text: 'Profesyonel Baskı (PDF)',
+            text: tr('prof_print_pdf'),
             icon: CupertinoIcons.doc_text_fill,
             onPressed: _handleSavePDF,
           ),

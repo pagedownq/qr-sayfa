@@ -7,9 +7,9 @@ class AdHelper {
   static String get bannerAdUnitId {
     if (kIsWeb) return '';
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-3777090766109762/2553456505';
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return 'ca-app-pub-3777090766109762/1223270371';
     }
     return '';
   }
@@ -18,101 +18,24 @@ class AdHelper {
   static String get interstitialAdUnitId {
     if (kIsWeb) return '';
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'ca-app-pub-3940256099942544/1033173712';
+      return 'ca-app-pub-3777090766109762/6436715400';
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return 'ca-app-pub-3940256099942544/4411468910';
+      return 'ca-app-pub-3777090766109762/8523321685';
     }
     return '';
   }
 
-  // App Open Ad Unit ID (Uygulama açılış reklamı)
-  static String get appOpenAdUnitId {
-    if (kIsWeb) return '';
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'ca-app-pub-3940256099942544/9257395921';
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return 'ca-app-pub-3940256099942544/5575463023';
-    }
-    return '';
-  }
+
 
   // Native Advanced Ad Unit ID (Yerel gelişmiş reklam)
   static String get nativeAdvancedAdUnitId {
     if (kIsWeb) return '';
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'ca-app-pub-3940256099942544/2247696110';
+      return 'ca-app-pub-3777090766109762/1160483789';
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return 'ca-app-pub-3940256099942544/3986624511';
+      return 'ca-app-pub-3777090766109762/7597107035';
     }
     return '';
   }
 }
 
-// Global AppOpen Ad Manager
-class AppOpenAdManager {
-  AppOpenAd? _appOpenAd;
-  bool _isShowingAd = false;
-  DateTime? _appOpenLoadTime;
-
-  void loadAd() {
-    AppOpenAd.load(
-      adUnitId: AdHelper.appOpenAdUnitId,
-      request: const AdRequest(),
-      adLoadCallback: AppOpenAdLoadCallback(
-        onAdLoaded: (ad) {
-          _appOpenLoadTime = DateTime.now();
-          _appOpenAd = ad;
-        },
-        onAdFailedToLoad: (error) {
-          debugPrint('AppOpenAd failed to load: $error');
-        },
-      ),
-    );
-  }
-
-  bool get isAdAvailable {
-    return _appOpenAd != null &&
-        _appOpenLoadTime != null &&
-        DateTime.now().difference(_appOpenLoadTime!).inHours < 4;
-  }
-
-  void showAdIfAvailable() {
-    if (!isAdAvailable) {
-      loadAd();
-      return;
-    }
-    if (_isShowingAd) {
-      return;
-    }
-    _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (ad) {
-        _isShowingAd = true;
-      },
-      onAdFailedToShowFullScreenContent: (ad, error) {
-        _isShowingAd = false;
-        ad.dispose();
-        _appOpenAd = null;
-      },
-      onAdDismissedFullScreenContent: (ad) {
-        _isShowingAd = false;
-        ad.dispose();
-        _appOpenAd = null;
-        loadAd();
-      },
-    );
-    _appOpenAd!.show();
-  }
-}
-
-class AppLifecycleReactor extends WidgetsBindingObserver {
-  final AppOpenAdManager appOpenAdManager;
-
-  AppLifecycleReactor({required this.appOpenAdManager});
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      appOpenAdManager.showAdIfAvailable();
-    }
-  }
-}

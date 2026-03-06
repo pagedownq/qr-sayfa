@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/platform_model.dart';
 import '../constants/platforms.dart';
 import '../services/haptic_service.dart';
+import '../l10n/app_localizations.dart';
 
 class PlatformSelectionScreen extends StatefulWidget {
   const PlatformSelectionScreen({super.key});
@@ -45,9 +46,9 @@ class _PlatformSelectionScreenState extends State<PlatformSelectionScreen> {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: const Color(0x801E293B),
         border: null,
-        middle: const Text(
-          'Platform Seçin',
-          style: TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.bold),
+        middle: Text(
+          tr('select_platform'),
+          style: const TextStyle(color: CupertinoColors.white, fontWeight: FontWeight.bold),
         ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -66,7 +67,7 @@ class _PlatformSelectionScreenState extends State<PlatformSelectionScreen> {
                 child: CupertinoSearchTextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
-                  placeholder: 'Platform ara...',
+                  placeholder: tr('search_platform'),
                   style: const TextStyle(color: CupertinoColors.white),
                   placeholderStyle: TextStyle(color: CupertinoColors.white.withOpacity(0.3)),
                   backgroundColor: const Color(0xFF1E293B).withOpacity(0.6),
@@ -88,7 +89,7 @@ class _PlatformSelectionScreenState extends State<PlatformSelectionScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Sonuç bulunamadı',
+                      tr('no_results_found'),
                       style: TextStyle(
                         color: const Color(0xFF94A3B8).withOpacity(0.6),
                         fontSize: 16,

@@ -9,6 +9,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/services.dart';
 import 'premium_screen.dart';
 import '../services/haptic_service.dart';
+import '../l10n/app_localizations.dart';
 
 class ScanHistoryScreen extends StatelessWidget {
   const ScanHistoryScreen({super.key});
@@ -18,9 +19,9 @@ class ScanHistoryScreen extends StatelessWidget {
     final diff = now.difference(dt);
 
     if (diff.inDays == 0 && now.day == dt.day) {
-      return '${'Bugün'} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      return '${tr('today_str')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     } else if (diff.inDays == 0 || diff.inDays == 1 && now.day != dt.day) {
-      return '${'Dün'} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      return '${tr('yesterday_str')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     } else {
       return '${dt.day.toString().padLeft(2, '0')}.${dt.month.toString().padLeft(2, '0')}.${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     }
@@ -32,7 +33,7 @@ class ScanHistoryScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0F172A),
       navigationBar: CupertinoNavigationBar(
         middle: Text(
-          'Tarama Geçmişi',
+          tr('scan_history'),
           style: const TextStyle(color: CupertinoColors.white),
         ),
         backgroundColor: const Color(0xFF1E293B),
@@ -51,18 +52,18 @@ class ScanHistoryScreen extends StatelessWidget {
                 showCupertinoDialog(
                   context: context,
                   builder: (context) => CupertinoAlertDialog(
-                    title: Text('Geçmişi Temizle'),
+                    title: Text(tr('clear_history')),
                     content: Text(
-                      'Tüm geçmişi silmek istediğinize emin misiniz?',
+                      tr('clear_history_confirm'),
                     ),
                     actions: [
                       CupertinoDialogAction(
-                        child: Text('İptal'),
+                        child: Text(tr('cancel')),
                         onPressed: () => Navigator.pop(context),
                       ),
                       CupertinoDialogAction(
                         isDestructiveAction: true,
-                        child: Text('Geçmişi Temizle'),
+                        child: Text(tr('clear_history')),
                         onPressed: () async {
                           scanHistoryNotifier.value = [];
                           final prefs = await SharedPreferences.getInstance();
@@ -96,7 +97,7 @@ class ScanHistoryScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Henüz hiç QR kodu taratmadınız.',
+                        tr('no_scans_yet'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: CupertinoColors.systemGrey,
@@ -218,7 +219,7 @@ class ScanHistoryScreen extends StatelessWidget {
                           showCupertinoDialog(
                             context: context,
                             builder: (context) => CupertinoAlertDialog(
-                              title: Text('Tarama Detayı'),
+                              title: Text(tr('scan_details')),
                               content: Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(item.content),
@@ -226,7 +227,7 @@ class ScanHistoryScreen extends StatelessWidget {
                               actions: [
                                 if (isUrl)
                                   CupertinoDialogAction(
-                                    child: Text('Bağlantıyı Aç'),
+                                    child: Text(tr('open_link')),
                                     onPressed: () {
                                       Navigator.pop(context);
                                       String urlToLaunch = content;
@@ -238,7 +239,7 @@ class ScanHistoryScreen extends StatelessWidget {
                                   ),
                                 CupertinoDialogAction(
                                   isDefaultAction: true,
-                                  child: Text('Kapat'),
+                                  child: Text(tr('close')),
                                   onPressed: () => Navigator.pop(context),
                                 ),
                               ],
@@ -276,14 +277,14 @@ class ScanHistoryScreen extends StatelessWidget {
                                       color: const Color(0xFF0F172A).withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(CupertinoIcons.lock_fill, color: CupertinoColors.systemYellow, size: 16),
-                                        SizedBox(width: 6),
+                                        const Icon(CupertinoIcons.lock_fill, color: CupertinoColors.systemYellow, size: 16),
+                                        const SizedBox(width: 6),
                                         Text(
-                                          'Premium ile Aç',
-                                          style: TextStyle(
+                                          tr('unlock_with_premium'),
+                                          style: const TextStyle(
                                             color: CupertinoColors.systemYellow,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 12,

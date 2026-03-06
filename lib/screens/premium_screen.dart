@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../services/iap_service.dart';
 import '../services/haptic_service.dart';
+import '../l10n/app_localizations.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({super.key});
@@ -70,9 +71,9 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Text(
-            'Geri Yükle',
-            style: TextStyle(
+          child: Text(
+            tr('restore_purchases'),
+            style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF94A3B8),
               fontWeight: FontWeight.w600,
@@ -158,10 +159,10 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                         const SizedBox(height: 40),
 
                         // Title
-                        const Text(
-                          'Premium\'a Geçin',
+                        Text(
+                          tr('upgrade_to_premium'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: CupertinoColors.white,
@@ -169,10 +170,10 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                           ),
                         ),
                         const SizedBox(height: 12),
-                        const Text(
-                          'Tüm özelliklerin kilidini açın ve reklamsız\ndeneyimin tadını çıkarın.',
+                        Text(
+                          tr('premium_desc_full'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                             color: Color(0xFF94A3B8),
                             height: 1.4,
@@ -181,11 +182,11 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                         const SizedBox(height: 40),
 
                         // Features List
-                        _buildFeatureRow(CupertinoIcons.nosign, 'Reklamsız Deneyim', 'Kesintisiz kullanımın keyfini çıkarın'),
+                        _buildFeatureRow(CupertinoIcons.nosign, tr('ad_free_experience'), tr('ad_free_desc')),
                         const SizedBox(height: 24),
-                        _buildFeatureRow(CupertinoIcons.color_filter, 'Sınırsız Özelleştirme', 'QR kodlarınızı dilediğiniz gibi tasarlayın'),
+                        _buildFeatureRow(CupertinoIcons.color_filter, tr('unlimited_customization'), tr('customization_desc')),
                         const SizedBox(height: 24),
-                        _buildFeatureRow(CupertinoIcons.cloud_download_fill, 'Yüksek Kalite İndirme', 'En net ve kaliteli formatta kaydedin'),
+                        _buildFeatureRow(CupertinoIcons.cloud_download_fill, tr('hq_download'), tr('hq_download_desc')),
                         
                         const Spacer(),
                         const SizedBox(height: 32),
@@ -248,8 +249,8 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
 
   Widget _buildProductsSection() {
     if (!_iapService.isAvailable) {
-      return const Center(
-        child: Text('Mağaza bağlantısı sağlanamadı.', style: TextStyle(color: CupertinoColors.destructiveRed)),
+      return Center(
+        child: Text(tr('store_connection_failed'), style: const TextStyle(color: CupertinoColors.destructiveRed)),
       );
     }
     if (_iapService.products.isEmpty) {
@@ -307,7 +308,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                             Row(
                               children: [
                                 Text(
-                                  isYearly ? 'Yıllık' : 'Aylık',
+                                  isYearly ? tr('yearly') : tr('monthly'),
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -322,9 +323,9 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                                       color: const Color(0xFF3B3300),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: const Text(
-                                      '%20 Tasarruf',
-                                      style: TextStyle(
+                                    child: Text(
+                                      tr('save_20_percent'),
+                                      style: const TextStyle(
                                         color: Color(0xFFFFD700),
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
@@ -336,7 +337,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              isYearly ? '2 Ay Bedava fırsatıyla' : 'Her ay faturalandırılır',
+                              isYearly ? tr('two_months_free') : tr('billed_monthly'),
                               style: const TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFF94A3B8),
@@ -357,7 +358,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              isYearly ? '/yıllık' : '/aylık',
+                              isYearly ? tr('per_year') : tr('per_month'),
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Color(0xFF94A3B8),
@@ -377,9 +378,9 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                           color: const Color(0xFFFFD700),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
-                          'EN POPÜLER',
-                          style: TextStyle(
+                        child: Text(
+                          tr('most_popular'),
+                          style: const TextStyle(
                             color: Color(0xFF0F172A),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
@@ -422,10 +423,10 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                 ),
               ],
             ),
-            child: const Center(
+            child: Center(
               child: Text(
-                'Abone Ol',
-                style: TextStyle(
+                tr('subscribe'),
+                style: const TextStyle(
                   color: Color(0xFF0F172A),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -436,10 +437,10 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
         ),
         
         const SizedBox(height: 16),
-        const Text(
-          'Ödeme Apple/Google Play hesabınızdan tahsil edilecektir.\nİstediğiniz zaman iptal edin.',
+        Text(
+          tr('subscription_terms'),
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             color: Color(0xFF64748B),
             height: 1.4,
@@ -484,9 +485,9 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text(
-                        'Özel Teklif',
-                        style: TextStyle(
+                      Text(
+                        tr('special_offer'),
+                        style: const TextStyle(
                           color: Color(0xFFFFD700),
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -494,7 +495,7 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Arkadaşlarını davet et, 1 ay ücretsiz kazan.',
+                        tr('invite_friends_offer'),
                         style: TextStyle(
                           color: CupertinoColors.white.withValues(alpha: 0.9),
                           fontSize: 12,

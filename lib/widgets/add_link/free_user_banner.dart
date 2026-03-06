@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../screens/premium_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 class FreeUserBanner extends StatelessWidget {
   const FreeUserBanner({super.key});
@@ -31,21 +32,21 @@ class FreeUserBanner extends StatelessWidget {
                 child: const Icon(CupertinoIcons.star_fill, color: Color(0xFF00D2FF), size: 24),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Premium Özellikler',
-                      style: TextStyle(
+                      tr('premium_features'),
+                      style: const TextStyle(
                         color: CupertinoColors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      'QR renklerini ve şekillerini değiştirin',
-                      style: TextStyle(
+                      tr('premium_features_desc'),
+                      style: const TextStyle(
                         color: CupertinoColors.systemGrey,
                         fontSize: 13,
                       ),
@@ -69,9 +70,9 @@ class FreeUserBanner extends StatelessWidget {
                   CupertinoPageRoute(builder: (context) => const PremiumScreen()),
                 );
               },
-              child: const Text(
-                'Premium\'a Geç',
-                style: TextStyle(
+              child: Text(
+                tr('go_premium'),
+                style: const TextStyle(
                   color: Color(0xFF0F172A),
                   fontWeight: FontWeight.bold,
                   fontSize: 15,

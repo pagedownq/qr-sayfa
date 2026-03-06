@@ -16,6 +16,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'dart:math';
+import 'l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -29,30 +30,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
   bool _isLoading = false;
 
-  final List<Map<String, dynamic>> _onboardingData = [
+  List<Map<String, dynamic>> get _onboardingData => [
     {
-      'title': 'Qurio\'ya\nHoş Geldiniz',
-      'description':
-          'Tüm sosyal medya adreslerinizi ve linklerinizi tek bir noktada toplayın, sadece size özel QR kartınızı oluşturun.',
+      'title': tr('onboarding_1_title'),
+      'description': tr('onboarding_1_desc'),
       'icon': CupertinoIcons.qrcode,
       'type': 'policy',
-      'highlight': 'DİJİTAL KİMLİĞİNİZ',
+      'highlight': tr('onboarding_1_highlight'),
     },
     {
-      'title': 'Bulut Üzerinde\nYedekleyin',
-      'description':
-          'Bilgilerinizi güvenle yedekleyin ve tüm cihazlarınızdan kesintisiz bir deneyim yaşamak için hesabınızı bağlayın.',
+      'title': tr('onboarding_2_title'),
+      'description': tr('onboarding_2_desc'),
       'icon': CupertinoIcons.cloud_fill,
       'type': 'login',
-      'highlight': 'GÜVENLİ VE SENKRONİZE',
+      'highlight': tr('onboarding_2_highlight'),
     },
     {
-      'title': 'Saniyeler İçinde\nPaylaşın',
-      'description':
-          'Linklerinizi ekleyin, QR kodunuzu özelleştirin ve tek bir dokunuşla dünyayla paylaşmaya başlayın.',
+      'title': tr('onboarding_3_title'),
+      'description': tr('onboarding_3_desc'),
       'icon': CupertinoIcons.sparkles,
       'type': 'finish',
-      'highlight': 'PRATİK VE HIZLI',
+      'highlight': tr('onboarding_3_highlight'),
     },
   ];
 
@@ -190,11 +188,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         showCupertinoDialog(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            title: const Text('Giriş Hatası'),
-            content: const Text('E-posta veya şifre hatalı. Lütfen tekrar deneyin.'),
+            title: Text(tr('login_error')),
+            content: Text(tr('email_password_error')),
             actions: [
               CupertinoDialogAction(
-                child: const Text('Tamam'),
+                child: Text(tr('ok')),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -213,14 +211,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('E-posta ile Giriş'),
+        title: Text(tr('login_with_email')),
         content: Padding(
           padding: const EdgeInsets.only(top: 16),
           child: Column(
             children: [
               CupertinoTextField(
                 controller: emailController,
-                placeholder: 'E-posta',
+                placeholder: tr('email_address'),
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: CupertinoColors.white),
                 placeholderStyle: TextStyle(color: CupertinoColors.systemGrey.withOpacity(0.5)),
@@ -233,7 +231,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               const SizedBox(height: 12),
               CupertinoTextField(
                 controller: passwordController,
-                placeholder: 'Şifre',
+                placeholder: tr('password'),
                 obscureText: true,
                 style: const TextStyle(color: CupertinoColors.white),
                 placeholderStyle: TextStyle(color: CupertinoColors.systemGrey.withOpacity(0.5)),
@@ -248,12 +246,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Vazgeç'),
+            child: Text(tr('cancel')),
             onPressed: () => Navigator.pop(context),
           ),
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: const Text('Giriş Yap'),
+            child: Text(tr('login')),
             onPressed: () {
               final email = emailController.text;
               final password = passwordController.text;
@@ -405,7 +403,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 CupertinoPageRoute(builder: (context) => const PoliciesScreen()),
               ),
               child: Text(
-                'Kullanım Şartlarını Oku',
+                tr('read_terms_of_use'),
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.5),
                   fontSize: 13,
@@ -460,9 +458,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     const FaIcon(FontAwesomeIcons.google, size: 20, color: Color(0xFF0F172A)),
                     const SizedBox(width: 12),
-                    const Text(
-                      'Google ile Devam Et',
-                      style: TextStyle(
+                    Text(
+                      tr('continue_with_google'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF0F172A),
@@ -482,14 +480,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   color: CupertinoColors.black,
                   borderRadius: BorderRadius.circular(20),
                   onPressed: _isLoading ? null : _signInWithApple,
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(FontAwesomeIcons.apple, size: 22, color: CupertinoColors.white),
-                      SizedBox(width: 10),
+                      const Icon(FontAwesomeIcons.apple, size: 22, color: CupertinoColors.white),
+                      const SizedBox(width: 10),
                       Text(
-                        'Apple ile Devam Et',
-                        style: TextStyle(
+                        tr('continue_with_apple'),
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: CupertinoColors.white,
@@ -509,14 +507,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 color: const Color(0xFF1E293B),
                 borderRadius: BorderRadius.circular(20),
                 onPressed: _isLoading ? null : _showEmailLoginDialog,
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(CupertinoIcons.mail_solid, size: 20, color: CupertinoColors.white),
-                    SizedBox(width: 12),
+                    const Icon(CupertinoIcons.mail_solid, size: 20, color: CupertinoColors.white),
+                    const SizedBox(width: 12),
                     Text(
-                      'E-posta ile Devam Et',
-                      style: TextStyle(
+                      tr('continue_with_email'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: CupertinoColors.white,
@@ -560,8 +558,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   String _getButtonText(String type) {
-    if (type == 'policy') return 'Kabul Et ve Başla';
-    if (type == 'login') return 'Google ile Bağlan';
-    return 'Hadi Başlayalım';
+    if (type == 'policy') return tr('accept_and_start');
+    if (type == 'login') return tr('connect_with_google');
+    return tr('lets_start');
   }
 }

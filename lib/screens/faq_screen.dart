@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import '../l10n/app_localizations.dart';
 
 class FAQScreen extends StatelessWidget {
   const FAQScreen({super.key});
@@ -8,9 +9,9 @@ class FAQScreen extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xFF0F172A),
       navigationBar: CupertinoNavigationBar(
-        middle: const Text(
-          'Sıkça Sorulan Sorular',
-          style: TextStyle(color: CupertinoColors.white),
+        middle: Text(
+          tr('faq'),
+          style: const TextStyle(color: CupertinoColors.white),
         ),
         backgroundColor: const Color(0xFF1E293B),
       ),
@@ -19,30 +20,30 @@ class FAQScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           children: [
             _buildFAQItem(
-              'Premium özellikleri nelerdir?',
-              'Premium üyelik ile reklamları kaldırabilir, QR kodlarınızı sınırsız renk ve logo ile özelleştirebilir, yüksek çözünürlüklü (PDF) çıktılar alabilir ve sınırsız tarama geçmişine erişebilirsiniz.',
+              tr('faq_premium_q'),
+              tr('faq_premium_a'),
             ),
             _buildFAQItem(
-              'QR kodum neden okunmuyor?',
-              'QR kodunuzun kontrastı düşük olabilir veya üzerine eklediğiniz logo çok büyük olabilir. Premium özelleştirmelerde logo boyutunu dengeli tutmaya ve okunaklı renkler seçmeye özen gösterin.',
+              tr('faq_qr_q'),
+              tr('faq_qr_a'),
             ),
             _buildFAQItem(
-              'Aboneliğimi nasıl iptal ederim?',
-              'Aboneliğinizi dilediğiniz zaman Google Play Store veya Apple App Store hesap ayarlarınız üzerinden "Abonelikler" sekmesine giderek iptal edebilirsiniz.',
+              tr('faq_cancel_q'),
+              tr('faq_cancel_a'),
             ),
             _buildFAQItem(
-              'Verilerim güvende mi?',
-              'Evet, tüm verileriniz Google Firebase altyapısı üzerinde şifreli olarak saklanır. Kişisel verileriniz asla üçüncü taraflarla paylaşılmaz.',
+              tr('faq_data_q'),
+              tr('faq_data_a'),
             ),
             _buildFAQItem(
-              'Telefon numarası QR kodu nasıl çalışır?',
-              'Telefon numarası eklediğinizde oluşan QR kod taratıldığında, tarayan kişinin telefonunda otomatik olarak arama ekranı açılır ve numaranız hazır hale gelir.',
+              tr('faq_phone_q'),
+              tr('faq_phone_a'),
             ),
             const SizedBox(height: 40),
-            const Center(
+            Center(
               child: Text(
-                'Daha fazla soru için: mgverse.dev@gmail.com',
-                style: TextStyle(
+                tr('more_questions'),
+                style: const TextStyle(
                   color: CupertinoColors.systemGrey,
                   fontSize: 13,
                 ),

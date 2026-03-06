@@ -14,6 +14,7 @@ import '../services/haptic_service.dart';
 import 'dart:async';
 import 'add_link/add_link_components.dart';
 import 'add_link/free_user_banner.dart';
+import '../l10n/app_localizations.dart';
 
 void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
   final TextEditingController urlController = TextEditingController();
@@ -75,11 +76,11 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Başarılı'),
+        title: Text(tr('success')),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Tamam'),
+            child: Text(tr('ok')),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -126,10 +127,10 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                           CupertinoButton(
                             padding: EdgeInsets.zero,
                             onPressed: () => Navigator.pop(context),
-                            child: const Text('İptal', style: TextStyle(color: CupertinoColors.systemRed)),
+                            child: Text(tr('cancel'), style: const TextStyle(color: CupertinoColors.systemRed)),
                           ),
                           Text(
-                            isWifi ? 'WiFi Ekle' : '${platform['name']} Ekle',
+                            isWifi ? tr('add_wifi') : '${platform['name']} ${tr('add_text')}',
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.bold,
@@ -173,12 +174,12 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                   showCupertinoDialog(
                                     context: context,
                                     builder: (context) => CupertinoAlertDialog(
-                                      title: const Text('Eklenemedi'),
+                                      title: Text(tr('cannot_add')),
                                       content: Text(errorMsg),
                                       actions: [
                                         CupertinoDialogAction(
                                           isDefaultAction: true,
-                                          child: const Text('Tamam'),
+                                          child: Text(tr('ok')),
                                           onPressed: () => Navigator.pop(context),
                                         ),
                                       ],
@@ -204,12 +205,12 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                 LinkManager.addLink(newLink, platform['id']).then((success) {
                                   if (success && context.mounted) {
                                     Navigator.pop(context);
-                                    showToast('$finalName başarıyla eklendi!');
+                                    showToast('$finalName ${tr('added_successfully')}');
                                   }
                                 });
                               }
                             },
-                            child: const Text('Ekle', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF00D2FF))),
+                            child: Text(tr('add'), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF00D2FF))),
                           ),
                         ],
                       ),
@@ -231,8 +232,8 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                     backgroundColor: const Color(0xFF1E293B),
                                     thumbColor: const Color(0xFF00D2FF),
                                     children: {
-                                      'personal': SegmentedText(text: 'Kişisel', isSelected: currentCategory == 'personal'),
-                                      'business': SegmentedText(text: 'İş', isSelected: currentCategory == 'business'),
+                                      'personal': SegmentedText(text: tr('personal'), isSelected: currentCategory == 'personal'),
+                                      'business': SegmentedText(text: tr('business'), isSelected: currentCategory == 'business'),
                                     },
                                     onValueChanged: (val) {
                                       if (val != null) {
@@ -248,23 +249,23 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                           const SizedBox(height: 32),
 
                           if (isPhone) ...[
-                            const InputLabel(label: 'Telefon Numarası'),
-                            CupertinoInput(controller: urlController, placeholder: 'Örn: +905...', type: TextInputType.phone),
+                            InputLabel(label: tr('phone_number')),
+                            CupertinoInput(controller: urlController, placeholder: tr('example_phone'), type: TextInputType.phone),
                           ] else if (isWifi) ...[
-                            const InputLabel(label: 'WiFi Bilgileri'),
-                            CupertinoInput(controller: wifiSsidController, placeholder: 'Ağ Adı (SSID)'),
+                            InputLabel(label: tr('wifi_details')),
+                            CupertinoInput(controller: wifiSsidController, placeholder: tr('network_name_ssid')),
                             const SizedBox(height: 12),
-                            CupertinoInput(controller: wifiPasswordController, placeholder: 'Şifre', type: TextInputType.text, obscure: true),
+                            CupertinoInput(controller: wifiPasswordController, placeholder: tr('password'), type: TextInputType.text, obscure: true),
                           ] else ...[
                             if (isOther) ...[
-                              const InputLabel(label: 'Başlık'),
-                              CupertinoInput(controller: nameController, placeholder: 'Örn: Portfolyom'),
+                              InputLabel(label: tr('title')),
+                              CupertinoInput(controller: nameController, placeholder: tr('example_portfolio')),
                               const SizedBox(height: 16),
                             ],
-                            const InputLabel(label: 'Bağlantı Linki'),
+                            InputLabel(label: tr('connection_link')),
                             CupertinoTextField(
                               controller: urlController,
-                              placeholder: platform['inputHint'] ?? 'https://...',
+                              placeholder: platform['inputHint'] ?? tr('connection_link'),
                               keyboardType: TextInputType.url,
                               placeholderStyle: const TextStyle(color: CupertinoColors.systemGrey, fontSize: 14),
                               style: const TextStyle(color: CupertinoColors.white, fontSize: 15),
@@ -315,9 +316,9 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                           child: const Icon(CupertinoIcons.star_fill, color: Color(0xFFFFD700), size: 16),
                                         ),
                                         const SizedBox(width: 12),
-                                        const Text(
-                                          "Premium QR Tasarımı",
-                                          style: TextStyle(
+                                        Text(
+                                          tr('premium_qr_design'),
+                                          style: const TextStyle(
                                             color: Color(0xFFFFD700),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 17,
@@ -328,33 +329,33 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                     ),
                                     const SizedBox(height: 24),
                                     
-                                    const InputLabel(label: 'QR Rengi'),
+                                    InputLabel(label: tr('qr_color')),
                                     const SizedBox(height: 12),
                                     ColorPalette(selected: selectedQrColor, onSelect: (color) {
                                       setDialogState(() => selectedQrColor = color);
                                     }),
                                     
                                     const SizedBox(height: 32),
-                                    const InputLabel(label: 'Vücut Kalıpları (Noktalar)'),
+                                    InputLabel(label: tr('body_shapes_dots')),
                                     const SizedBox(height: 12),
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
                                         children: [
                                           LinkDesignCard(
-                                            label: 'Kare',
+                                            label: tr('square'),
                                             isSelected: selectedQrShape == 'square',
                                             onTap: () => setDialogState(() => selectedQrShape = 'square'),
                                             child: const Icon(CupertinoIcons.square_fill, color: CupertinoColors.white, size: 24),
                                           ),
                                           LinkDesignCard(
-                                            label: 'Nokta',
+                                            label: tr('dot'),
                                             isSelected: selectedQrShape == 'dots',
                                             onTap: () => setDialogState(() => selectedQrShape = 'dots'),
                                             child: const Icon(CupertinoIcons.circle_fill, color: CupertinoColors.white, size: 24),
                                           ),
                                           LinkDesignCard(
-                                            label: 'Oval',
+                                            label: tr('oval'),
                                             isSelected: selectedQrShape == 'rounded',
                                             onTap: () => setDialogState(() => selectedQrShape = 'rounded'),
                                             child: Container(
@@ -370,26 +371,26 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                     ),
 
                                     const SizedBox(height: 32),
-                                    const InputLabel(label: 'Dış Göz Desenleri'),
+                                    InputLabel(label: tr('outer_eye_patterns')),
                                     const SizedBox(height: 12),
                                     SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
                                         children: [
                                           LinkDesignCard(
-                                            label: 'Kare',
+                                            label: tr('square'),
                                             isSelected: selectedQrEyeShape == 'square',
                                             onTap: () => setDialogState(() => selectedQrEyeShape = 'square'),
                                             child: ShapeIcon(icon: CupertinoIcons.square, isSelected: selectedQrEyeShape == 'square'),
                                           ),
                                           LinkDesignCard(
-                                            label: 'Daire',
+                                            label: tr('circle'),
                                             isSelected: selectedQrEyeShape == 'circle',
                                             onTap: () => setDialogState(() => selectedQrEyeShape = 'circle'),
                                             child: ShapeIcon(icon: CupertinoIcons.circle, isSelected: selectedQrEyeShape == 'circle'),
                                           ),
                                           LinkDesignCard(
-                                            label: 'Modern',
+                                            label: tr('modern'),
                                             isSelected: selectedQrEyeShape == 'rounded',
                                             onTap: () => setDialogState(() => selectedQrEyeShape = 'rounded'),
                                             child: Container(
@@ -405,7 +406,7 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                     ),
 
                                     const SizedBox(height: 32),
-                                    const InputLabel(label: 'Logo Ayarları'),
+                                    InputLabel(label: tr('logo_settings')),
                               
                                     const SizedBox(height: 12),
                                     Row(
@@ -440,7 +441,7 @@ void showAddLinkModal(BuildContext context, Map<String, dynamic> platform) {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                    useLogo ? "Logoyu Değiştir" : "Özel Logo Seç",
+                                                    useLogo ? tr('change_logo') : tr('select_custom_logo'),
                                                     style: const TextStyle(fontSize: 14, color: CupertinoColors.white, fontWeight: FontWeight.w600),
                                                   ),
                                                 ],

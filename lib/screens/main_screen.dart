@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../services/haptic_service.dart';
 import '../widgets/floating_navbar.dart';
+import '../l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -80,10 +81,10 @@ class _MainScreenState extends State<MainScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _quickActions.setShortcutItems(<ShortcutItem>[
-      ShortcutItem(type: 'scan', localizedTitle: 'QR Okut', icon: 'icon_scan'),
+      ShortcutItem(type: 'scan', localizedTitle: tr('scan_qr_short'), icon: 'icon_scan'),
       ShortcutItem(
         type: 'generate',
-        localizedTitle: 'Hızlı QR Oluştur',
+        localizedTitle: tr('quick_qr_create'),
         icon: 'icon_generate',
       ),
     ]);

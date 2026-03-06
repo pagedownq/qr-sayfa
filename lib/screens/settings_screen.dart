@@ -32,6 +32,9 @@ import '../services/haptic_service.dart';
 import 'premium_screen.dart';
 import '../utils/link_manager.dart';
 
+import '../utils/link_manager.dart';
+import '../l10n/app_localizations.dart';
+
 import 'platform_selection_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -57,15 +60,15 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
     final isPremium = isPremiumNotifier.value;
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xFF0F172A),
-      navigationBar: const CupertinoNavigationBar(
+      navigationBar: CupertinoNavigationBar(
         middle: Text(
-          'Ayarlar',
-          style: TextStyle(
+          tr('settings'),
+          style: const TextStyle(
             color: CupertinoColors.white,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Color(0xFF1E293B), // Opaque for better performance
+        backgroundColor: const Color(0xFF1E293B), // Opaque for better performance
         border: null,
       ),
       child: Stack(
@@ -109,11 +112,11 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
                         child: Text(
-                          'SOSYAL MEDYA',
-                          style: TextStyle(
+                          tr('social_media'),
+                          style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -127,16 +130,16 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             icon: CupertinoIcons.plus,
                             backgroundColor: Color(0xFF00D2FF),
                           ),
-                          title: const Text(
-                            'Yeni Link Ekle',
-                            style: TextStyle(
+                          title: Text(
+                            tr('add_new_link'),
+                            style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          subtitle: const Text(
-                            'Uygulama veya sitenizi profilinize ekleyin',
-                            style: TextStyle(
+                          subtitle: Text(
+                            tr('add_link_subtitle'),
+                            style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 13,
                             ),
@@ -149,16 +152,16 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             icon: CupertinoIcons.list_bullet,
                             backgroundColor: CupertinoColors.systemYellow,
                           ),
-                          title: const Text(
-                            'Linkleri Sırala',
-                            style: TextStyle(
+                          title: Text(
+                            tr('reorder_links'),
+                            style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          subtitle: const Text(
-                            'Sıralamayı tercihinize göre değiştirin',
-                            style: TextStyle(
+                          subtitle: Text(
+                            tr('reorder_subtitle'),
+                            style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 13,
                             ),
@@ -174,16 +177,16 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                                 icon: CupertinoIcons.arrow_up_right_square_fill,
                                 backgroundColor: CupertinoColors.activeGreen,
                               ),
-                              title: const Text(
-                                'Otomatik Bağlantı',
-                                style: TextStyle(
+                              title: Text(
+                                tr('auto_link'),
+                                style: const TextStyle(
                                   color: CupertinoColors.white,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              subtitle: const Text(
-                                'URL\'leri direkt tarayıcıda açın',
-                                style: TextStyle(
+                              subtitle: Text(
+                                tr('auto_link_subtitle'),
+                                style: const TextStyle(
                                   color: Color(0xFF94A3B8),
                                   fontSize: 13,
                                 ),
@@ -206,16 +209,16 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                                 icon: CupertinoIcons.waveform_path,
                                 backgroundColor: CupertinoColors.systemPink,
                               ),
-                              title: const Text(
-                                'Titreşim Geri Bildirimi',
-                                style: TextStyle(
+                              title: Text(
+                                tr('haptic_feedback'),
+                                style: const TextStyle(
                                   color: CupertinoColors.white,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              subtitle: const Text(
-                                'Dokunma tepkilerini yönetin',
-                                style: TextStyle(
+                              subtitle: Text(
+                                tr('haptic_subtitle'),
+                                style: const TextStyle(
                                   color: Color(0xFF94A3B8),
                                   fontSize: 13,
                                 ),
@@ -231,6 +234,45 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             );
                           },
                         ),
+                        ValueListenableBuilder<Locale>(
+                          valueListenable: localeNotifier,
+                          builder: (context, locale, _) {
+                            final languageNames = {
+                              'en': 'English',
+                              'tr': 'Türkçe',
+                              'de': 'Deutsch',
+                              'ru': 'Русский',
+                            };
+                            return CupertinoListTile(
+                              leading: const _IOSSettingsIcon(
+                                icon: CupertinoIcons.globe,
+                                backgroundColor: CupertinoColors.systemTeal,
+                              ),
+                              title: Text(
+                                tr('language'),
+                                style: const TextStyle(
+                                  color: CupertinoColors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    languageNames[locale.languageCode] ?? 'English',
+                                    style: const TextStyle(
+                                      color: Color(0xFF94A3B8),
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const CupertinoListTileChevron(),
+                                ],
+                              ),
+                              onTap: _showLanguagePicker,
+                            );
+                          },
+                        ),
                       ]),
                     ],
                   ),
@@ -240,11 +282,11 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(24, 32, 24, 12),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 32, 24, 12),
                         child: Text(
-                          'ARAÇLAR',
-                          style: TextStyle(
+                          tr('tools'),
+                          style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -259,14 +301,14 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             backgroundColor: Color(0xFF00D2FF),
                           ),
                           title: Text(
-                            'Hızlı QR Oluştur',
+                            tr('quick_qr'),
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           subtitle: Text(
-                            'Metin veya linkten anında QR oluşturun',
+                            tr('qr_create_subtitle'),
                             style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 13,
@@ -291,14 +333,14 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                                     backgroundColor: CupertinoColors.systemYellow,
                                   ),
                                   title: Text(
-                                    "Premium'a Geç",
+                                    tr('go_premium_title'),
                                     style: const TextStyle(
                                       color: CupertinoColors.white,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                   subtitle: Text(
-                                    'Tüm ayrıcalıklardan faydalan',
+                                    tr('premium_subtitle'),
                                     style: const TextStyle(
                                       color: Color(0xFF94A3B8),
                                       fontSize: 13,
@@ -323,7 +365,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                       Padding(
                         padding: const EdgeInsets.fromLTRB(24, 32, 24, 12),
                         child: Text(
-                          'GEÇMİŞ & ANALİZ',
+                          tr('history_analysis'),
                           style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12,
@@ -339,14 +381,14 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             backgroundColor: CupertinoColors.systemIndigo,
                           ),
                           title: Text(
-                            'Tarama Geçmişi',
+                            tr('scan_history'),
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           subtitle: Text(
-                            'Tüm geçmişinizi görüntüleyin',
+                            tr('scan_history_subtitle'),
                             style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 13,
@@ -367,7 +409,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                       Padding(
                         padding: const EdgeInsets.fromLTRB(24, 32, 24, 12),
                         child: Text(
-                          'UYGULAMA',
+                          tr('app_section'),
                           style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12,
@@ -383,7 +425,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             backgroundColor: Color(0xFF00D2FF),
                           ),
                           title: Text(
-                            'Uygulamayı Paylaş',
+                            tr('share_app'),
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
@@ -392,9 +434,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                           trailing: const CupertinoListTileChevron(),
                           onTap: () {
                             // ignore: deprecated_member_use
-                            Share.share(
-                              'Qurio ile tanışın! Tüm dijital varlığınız tek bir QR kodda.',
-                            );
+                            Share.share(tr('share_text'));
                             AnalyticsService.logShareApp();
                           },
                         ),
@@ -404,7 +444,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             backgroundColor: CupertinoColors.systemOrange,
                           ),
                           title: Text(
-                            'Uygulamayı Puanla',
+                            tr('rate_app'),
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
@@ -419,7 +459,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             backgroundColor: Color(0xFF64748B),
                           ),
                           title: Text(
-                            'Uygulama Hakkında',
+                            tr('about_app'),
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
@@ -433,9 +473,9 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             icon: CupertinoIcons.question_circle_fill,
                             backgroundColor: CupertinoColors.systemIndigo,
                           ),
-                          title: const Text(
-                            'Sıkça Sorulan Sorular',
-                            style: TextStyle(
+                          title: Text(
+                            tr('faq'),
+                            style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
                             ),
@@ -449,7 +489,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                             backgroundColor: CupertinoColors.systemPurple,
                           ),
                           title: Text(
-                            'Politikalar ve Gizlilik',
+                            tr('policies'),
                             style: const TextStyle(
                               color: CupertinoColors.white,
                               fontWeight: FontWeight.w500,
@@ -467,18 +507,18 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                   child: _GlassSection(
                     marginTop: 32,
                     children: [
-                    CupertinoListTile(
-                      leading: const _IOSSettingsIcon(
-                        icon: CupertinoIcons.square_arrow_right,
-                        backgroundColor: CupertinoColors.destructiveRed,
-                      ),
-                      title: Text(
-                        'Oturumu Kapat',
-                        style: const TextStyle(
-                          color: CupertinoColors.destructiveRed,
-                          fontWeight: FontWeight.w600,
+                      CupertinoListTile(
+                        leading: const _IOSSettingsIcon(
+                          icon: CupertinoIcons.square_arrow_right,
+                          backgroundColor: CupertinoColors.destructiveRed,
                         ),
-                      ),
+                        title: Text(
+                          tr('sign_out'),
+                          style: const TextStyle(
+                            color: CupertinoColors.destructiveRed,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       onTap: () async {
                         final messenger = Navigator.of(
                           context,
@@ -514,25 +554,25 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                       padding: const EdgeInsets.symmetric(horizontal: 56),
                       child: Container(height: 1, color: const Color(0x0DFFFFFF)),
                     ),
-                    CupertinoListTile(
-                      leading: const _IOSSettingsIcon(
-                        icon: CupertinoIcons.delete,
-                        backgroundColor: Color(0xFF64748B),
-                      ),
-                      title: const Text(
-                        'Hesabı Sil',
-                        style: TextStyle(
-                          color: Color(0xFF94A3B8),
-                          fontWeight: FontWeight.w500,
+                      CupertinoListTile(
+                        leading: const _IOSSettingsIcon(
+                          icon: CupertinoIcons.delete,
+                          backgroundColor: Color(0xFF64748B),
                         ),
-                      ),
-                      subtitle: const Text(
-                        'Tüm verileriniz kalıcı olarak silinir',
-                        style: TextStyle(
-                          color: Color(0x8094A3B8),
-                          fontSize: 12,
+                        title: Text(
+                          tr('delete_account'),
+                          style: const TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
+                        subtitle: Text(
+                          tr('delete_account_desc'),
+                          style: const TextStyle(
+                            color: Color(0x8094A3B8),
+                            fontSize: 12,
+                          ),
+                        ),
                       onTap: () => _showDeleteAccountDialog(context),
                     ),
                   ]),
@@ -551,21 +591,21 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
                               icon: CupertinoIcons.star_fill,
                               backgroundColor: Color(0xFFFFD700), // Altın Rengi
                             ),
-                            title: const Text(
-                              'Premium Aktif',
-                              style: TextStyle(
-                                color: Color(0xFFFFD700),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                              title: Text(
+                                tr('premium_active'),
+                                style: const TextStyle(
+                                  color: Color(0xFFFFD700),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            subtitle: const Text(
-                              'Tüm sınırsız özellikleri kullanıyorsunuz',
-                              style: TextStyle(
-                                color: Color(0xFF94A3B8),
-                                fontSize: 13,
+                              subtitle: Text(
+                                tr('premium_active_desc'),
+                                style: const TextStyle(
+                                  color: Color(0xFF94A3B8),
+                                  fontSize: 13,
+                                ),
                               ),
-                            ),
                           ),
                         ]),
                       );
@@ -655,12 +695,12 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
-        _showErrorDialog('Hesabınızı silebilmek için yeni oturum açmış olmanız gerekmektedir. Lütfen çıkış yapıp tekrar girin.');
+        _showErrorDialog(tr('requires_recent_login'));
       } else {
-        _showErrorDialog('Hesap silme işlemi sırasında bir hata oluştu: ${e.message}');
+        _showErrorDialog('${tr('error_occurred')} ${e.message}');
       }
     } catch (e) {
-      _showErrorDialog('Bir hata oluştu: $e');
+      _showErrorDialog('${tr('error_occurred')} $e');
     }
   }
 
@@ -668,13 +708,11 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Hesabınızı Silin'),
-        content: const Text(
-          'Hesabınızı ve tüm verilerinizi kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
-        ),
+        title: Text(tr('delete_account')),
+        content: Text(tr('delete_account_confirm')),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Vazgeç'),
+            child: Text(tr('cancel')),
             onPressed: () => Navigator.pop(context),
           ),
           CupertinoDialogAction(
@@ -683,7 +721,7 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
               Navigator.pop(context);
               _deleteAccount();
             },
-            child: const Text('Evet, Sil'),
+            child: Text(tr('yes_delete')),
           ),
         ],
       ),
@@ -694,14 +732,58 @@ class _SettingsScreenState extends State<SettingsScreen> with AutomaticKeepAlive
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Hata'),
+        title: Text(tr('error')),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Tamam'),
+            child: Text(tr('ok')),
             onPressed: () => Navigator.pop(context),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showLanguagePicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(tr('select_language')),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setLocale(const Locale('en', ''));
+              Navigator.pop(context);
+            },
+            child: const Text('English'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setLocale(const Locale('tr', ''));
+              Navigator.pop(context);
+            },
+            child: const Text('Türkçe'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setLocale(const Locale('de', ''));
+              Navigator.pop(context);
+            },
+            child: const Text('Deutsch'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setLocale(const Locale('ru', ''));
+              Navigator.pop(context);
+            },
+            child: const Text('Русский'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          onPressed: () => Navigator.pop(context),
+          child: Text(tr('cancel')),
+        ),
       ),
     );
   }
